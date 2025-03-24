@@ -1,10 +1,10 @@
-INSERT INTO kpok.organization (name) VALUES
+INSERT INTO croc.organization (name) VALUES
   ('Городская клиническая больница № 2'),
   ('Детская городская клиническая поликлиника № 1'),
   ('Военно-клинический госпиталь, поликлиника'),
   ('Челябинский областной клинический противотуберкулезный диспансер');
 
-INSERT INTO kpok.department (name, pid) VALUES
+INSERT INTO croc.department (name, pid) VALUES
   ('Отделение медицинской реабилитации', 1),
   ('Отделение терапии и кардиологии с палатой реанимации и интенсивной терапии', 1),
   ('Хозяйственное отделение', 2),
@@ -14,7 +14,7 @@ INSERT INTO kpok.department (name, pid) VALUES
   ('Отдел социально-психологической помощи', 4),
   ('Диагностическое отделение', 4);
 
-INSERT INTO kpok.ward (name, pid, activity) VALUES
+INSERT INTO croc.ward (name, pid, activity) VALUES
   ('Первая палата', 1, true),
   ('Вторая палата', 1, true),
   ('Кабинет рентгенологии', 2, true),
@@ -26,7 +26,7 @@ INSERT INTO kpok.ward (name, pid, activity) VALUES
   ('Терапевтический кабинет', 7, false),
   ('Терапевтический кабинет', 6, true);
 
-INSERT INTO kpok.staff (surname, firstname, lastname, position, organization, department, ward) VALUES
+INSERT INTO croc.staff (surname, firstname, lastname, position, organization, department, ward) VALUES
   ('Иванов', 'Петр', 'Сергеевич', 'врач-терапевт', 1, 1, 1),
   ('Петрова', 'Елена', 'Викторовна', 'медсестра', 1, 1, 1),
   ('Сидоров', 'Алексей', 'Игоревич', 'хирург', 1, 2, NULL),
@@ -43,7 +43,7 @@ INSERT INTO kpok.staff (surname, firstname, lastname, position, organization, de
   ('Лебедева', 'Светлана', 'Борисовна', 'кардиолог', 2, 2, 5),
   ('Михайлов', 'Артем', 'Сергеевич', 'педиатр', 3, 5, 8);
 
-INSERT INTO kpok.patient (firstname, surname, lastname, date_of_birth, allergy) VALUES
+INSERT INTO croc.patient (firstname, surname, lastname, birth_date, allergy) VALUES
   ('Иванов', 'Петр', 'Сергеевич', '1980-05-14', NULL),
   ('Петрова', 'Елена', 'Викторовна', '1992-08-21', NULL),
   ('Сидоров', 'Алексей', 'Игоревич', '1985-12-03', 'Отсутствуют'),
