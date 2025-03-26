@@ -21,6 +21,11 @@ CREATE TABLE croc.organization (
   CONSTRAINT organization_id_pkey PRIMARY KEY (id)
 );
 
+COMMENT ON TABLE croc.organization
+    IS 'Мед.учреждения, подключенные к системе';
+COMMENT ON COLUMN croc.organization.name
+    IS 'Название мед.учреждения';
+
 CREATE TABLE croc.department (
   id SERIAL,
   name VARCHAR(100) NOT NULL,
@@ -31,6 +36,13 @@ CREATE TABLE croc.department (
   REFERENCES croc.organization (id)
   ON UPDATE CASCADE
 );
+
+COMMENT ON TABLE croc.department
+    IS 'Отделения мед.учреждений';
+COMMENT ON COLUMN croc.department.name
+    IS 'Название отделения';
+COMMENT ON COLUMN croc.department.pid
+    IS 'Мед.учреждение, к которому относится отделение';
 
 CREATE TABLE croc.ward (
 --Палаты, приёмные и др. помещения
@@ -46,6 +58,13 @@ CREATE TABLE croc.ward (
   REFERENCES croc.department (id)
   ON UPDATE CASCADE
 );
+
+COMMENT ON COLUMN croc.ward.name
+    IS 'Название/номер палаты';
+COMMENT ON COLUMN croc.ward.pid
+    IS 'Отделение, к которой относится палата';
+COMMENT ON COLUMN croc.ward.activity
+    IS 'Работает ли палата?';
 
 CREATE TABLE croc.staff (
   id SERIAL,
@@ -69,6 +88,23 @@ CREATE TABLE croc.staff (
   ON UPDATE CASCADE
 );
 
+COMMENT ON TABLE croc.staff
+    IS 'Сотрудники мед.учреждений';
+COMMENT ON COLUMN croc.staff.surname
+    IS 'Фамилия сотрудника';
+COMMENT ON COLUMN croc.staff.firstname
+    IS 'Имя сотрудника';
+COMMENT ON COLUMN croc.staff.lastname
+    IS 'Отчество сотрудника';
+COMMENT ON COLUMN croc.staff."position"
+    IS 'Должность сотрудника';
+COMMENT ON COLUMN croc.staff.organization
+    IS 'Организация, в которой работает сотрудник';
+COMMENT ON COLUMN croc.staff.department
+    IS 'Отделения, в которой работает сотрудник';
+COMMENT ON COLUMN croc.staff.ward
+    IS 'Палата, в которой работает сотрудник';
+
 CREATE TABLE croc.patient (
   id SERIAL,
   surname VARCHAR(50) NOT NULL,
@@ -82,6 +118,19 @@ CREATE TABLE croc.patient (
   CHECK (birth_date <= CURRENT_TIMESTAMP)
 );
 
+COMMENT ON TABLE croc.patient
+    IS 'Пациенты, посетившие мед.учреждения';
+COMMENT ON COLUMN croc.patient.surname
+    IS 'Фамилия пациента';
+COMMENT ON COLUMN croc.patient.firstname
+    IS 'Имя пациента';
+COMMENT ON COLUMN croc.patient.lastname
+    IS 'Отчество пациента';
+COMMENT ON COLUMN croc.patient.birth_date
+    IS 'День рождения пациента';
+COMMENT ON COLUMN croc.patient.allergy
+    IS 'Аллергии, заявленные/выявленные пациентом (у пациента)';
+
 CREATE TABLE croc.diagnosis (
   id SERIAL,
   code VARCHAR(20) NOT NULL,
@@ -92,6 +141,13 @@ CREATE TABLE croc.diagnosis (
   UNIQUE (code, name)
 );
 
+COMMENT ON TABLE croc.diagnosis
+    IS 'Список возможных диагнозов ';
+COMMENT ON COLUMN croc.diagnosis.code
+    IS 'Код диагноза МКБ';
+COMMENT ON COLUMN croc.diagnosis.name
+    IS 'Название диагноза МКБ';
+
 CREATE TABLE croc.measure_unit (
 --Единица измерения, в которой измеряется лекарство, и его форма
 
@@ -101,6 +157,13 @@ CREATE TABLE croc.measure_unit (
 
   CONSTRAINT measure_unit_id_pkey PRIMARY KEY (id)
 );
+
+COMMENT ON TABLE croc.measure_unit
+    IS 'Список мер измерения количества лекарственных средств';
+COMMENT ON COLUMN croc.measure_unit.measure_object
+    IS 'Измеряемый параметр';
+COMMENT ON COLUMN croc.measure_unit.measure_unit
+    IS 'Мера измерения параметра';
 
 CREATE TABLE croc.preparation (
 --Препараты, находящиеся в ходу
@@ -123,6 +186,23 @@ CREATE TABLE croc.preparation (
   CHECK (dosage > 0)
 );
 
+COMMENT ON TABLE croc.preparation
+    IS 'Препараты, находящиеся в распоряжении мед.учреждений';
+COMMENT ON COLUMN croc.preparation.name
+    IS 'Название препарата';
+COMMENT ON COLUMN croc.preparation.form
+    IS 'Форма выпуска';
+COMMENT ON COLUMN croc.preparation.dosage
+    IS 'Дозировка в единице препарата';
+COMMENT ON COLUMN croc.preparation.release_date
+    IS 'Дата выпуска партии';
+COMMENT ON COLUMN croc.preparation.expiration_date
+    IS 'Дата истечения срока годности партии';
+COMMENT ON COLUMN croc.preparation.manufacturer
+    IS 'Производитель препарата';
+COMMENT ON COLUMN croc.preparation.narcotic
+    IS 'Является наркотическим средством?';
+
 CREATE TABLE croc.preparation_book (
 --Журнал выдачи препаратов
   id SERIAL,
@@ -142,6 +222,17 @@ CREATE TABLE croc.preparation_book (
   CHECK (quantity > 0)
 );
 
+COMMENT ON TABLE croc.preparation_book
+    IS 'Препараты, назначенные пациентам';
+COMMENT ON COLUMN croc.preparation_book.patient
+    IS 'Какому пациенту выдан препарат';
+COMMENT ON COLUMN croc.preparation_book.preparation
+    IS 'Какой препарат выписан';
+COMMENT ON COLUMN croc.preparation_book.quantity
+    IS 'Количество выписанного препарата';
+COMMENT ON COLUMN croc.preparation_book.date
+    IS 'Дата и время назначенного приёма';
+
 CREATE TABLE croc.measure (
 --Проводимые измерения
  id SERIAL,
@@ -150,6 +241,13 @@ CREATE TABLE croc.measure (
 
  CONSTRAINT measure_id_pkey PRIMARY KEY (id)
 );
+
+COMMENT ON TABLE croc.measure
+    IS 'Список возможных измерений у пациента';
+COMMENT ON COLUMN croc.measure.name
+    IS 'Название измерения';
+COMMENT ON COLUMN croc.measure.measure_unit
+    IS 'Мера, в которой измеряется';
 
 CREATE TABLE croc.measure_book (
 --Журнал проведенных измерений
@@ -166,6 +264,15 @@ CREATE TABLE croc.measure_book (
   REFERENCES croc.measure (id)
   ON UPDATE CASCADE
 );
+
+COMMENT ON TABLE croc.measure_book
+    IS 'Проводимые измерения у пациентов';
+COMMENT ON COLUMN croc.measure_book.measure_type
+    IS 'Какое измерение проводится';
+COMMENT ON COLUMN croc.measure_book.patient
+    IS 'Пациент, у которого берётся измерение';
+COMMENT ON COLUMN croc.measure_book.date
+    IS 'Дата и время, назначенные для проведения измерения';
 
 CREATE TABLE croc.anamnesis (
   id BIGSERIAL,
@@ -210,6 +317,31 @@ CREATE TABLE croc.anamnesis (
   ON UPDATE CASCADE
 );
 
+COMMENT ON TABLE croc.anamnesis
+    IS 'Информация об итерациях нахождения в стационаре пациентов';
+COMMENT ON COLUMN croc.anamnesis.department
+    IS 'Отделение, в котором находится пациент во время итерации';
+COMMENT ON COLUMN croc.anamnesis.ward
+    IS 'Палата, в которой располагается пациент во время итерации';
+COMMENT ON COLUMN croc.anamnesis.patient
+    IS 'Описываемый пациент';
+COMMENT ON COLUMN croc.anamnesis.admission_date
+    IS 'Время поступления (начала итерации)';
+COMMENT ON COLUMN croc.anamnesis.discharge_date
+    IS 'Время выписки (окончания итерации)';
+COMMENT ON COLUMN croc.anamnesis.diagnosis
+    IS 'Диагноз, поставленный в этой итерации';
+COMMENT ON COLUMN croc.anamnesis.mobility
+    IS 'Мобильность пациента в итерации';
+COMMENT ON COLUMN croc.anamnesis.doctor
+    IS 'Доктор, за которым закреплён пациент';
+COMMENT ON COLUMN croc.anamnesis.nurse
+    IS 'Медсестра, за которой закреплён пациент';
+COMMENT ON COLUMN croc.anamnesis.measure
+    IS 'Проведённые и предстоящие измерения у пациента';
+COMMENT ON COLUMN croc.anamnesis.preparation
+    IS 'Назначенные и выданные препараты';
+
 CREATE TABLE croc."user" (
   id SERIAL NOT NULL,
   login VARCHAR(200) NOT NULL,
@@ -223,200 +355,13 @@ CREATE TABLE croc."user" (
   CONSTRAINT user_staff_uniq UNIQUE (staff)
 );
 
-
-
-
-COMMENT ON TABLE croc.anamnesis
-    IS 'Информация об итерациях нахождения в стационаре пациентов';
-
-COMMENT ON COLUMN croc.anamnesis.department
-    IS 'Отделение, в котором находится пациент во время итерации';
-
-COMMENT ON COLUMN croc.anamnesis.ward
-    IS 'Палата, в которой располагается пациент во время итерации';
-
-COMMENT ON COLUMN croc.anamnesis.patient
-    IS 'Описываемый пациент';
-
-COMMENT ON COLUMN croc.anamnesis.admission_date
-    IS 'Время поступления (начала итерации)';
-
-COMMENT ON COLUMN croc.anamnesis.discharge_date
-    IS 'Время выписки (окончания итерации)';
-
-COMMENT ON COLUMN croc.anamnesis.diagnosis
-    IS 'Диагноз, поставленный в этой итерации';
-
-COMMENT ON COLUMN croc.anamnesis.mobility
-    IS 'Мобильность пациента в итерации';
-
-COMMENT ON COLUMN croc.anamnesis.doctor
-    IS 'Доктор, за которым закреплён пациент';
-
-COMMENT ON COLUMN croc.anamnesis.nurse
-    IS 'Медсестра, за которой закреплён пациент';
-
-COMMENT ON COLUMN croc.anamnesis.measure
-    IS 'Проведённые и предстоящие измерения у пациента';
-
-COMMENT ON COLUMN croc.anamnesis.preparation
-    IS 'Назначенные и выданные препараты';
-	
-COMMENT ON TABLE croc.department
-    IS 'Отделения мед.учреждений';
-
-COMMENT ON COLUMN croc.department.name
-    IS 'Название отделения';
-
-COMMENT ON COLUMN croc.department.pid
-    IS 'Мед.учреждение, к которому относится отделение';
-	
-COMMENT ON TABLE croc.diagnosis
-    IS 'Список возможных диагнозов ';
-
-COMMENT ON COLUMN croc.diagnosis.code
-    IS 'Код диагноза МКБ';
-
-COMMENT ON COLUMN croc.diagnosis.name
-    IS 'Название диагноза МКБ';
-
-COMMENT ON TABLE croc.measure
-    IS 'Список возможных измерений у пациента';
-
-COMMENT ON COLUMN croc.measure.name
-    IS 'Название измерения';
-
-COMMENT ON COLUMN croc.measure.measure_unit
-    IS 'Мера, в которой измеряется';
-
-COMMENT ON TABLE croc.measure_book
-    IS 'Проводимые измерения у пациентов';
-
-COMMENT ON COLUMN croc.measure_book.measure_type
-    IS 'Какое измерение проводится';
-
-COMMENT ON COLUMN croc.measure_book.patient
-    IS 'Пациент, у которого берётся измерение';
-
-COMMENT ON COLUMN croc.measure_book.date
-    IS 'Дата и время, назначенные для проведения измерения';
-
-COMMENT ON TABLE croc.measure_unit
-    IS 'Список мер измерения количества лекарственных средств';
-
-COMMENT ON COLUMN croc.measure_unit.measure_object
-    IS 'Измеряемый параметр';
-
-COMMENT ON COLUMN croc.measure_unit.measure_unit
-    IS 'Мера измерения параметра';
-	
-COMMENT ON TABLE croc.organization
-    IS 'Мед.учреждения, подключенные к системе';
-
-COMMENT ON COLUMN croc.organization.name
-    IS 'Название мед.учреждения';
-
-COMMENT ON TABLE croc.patient
-    IS 'Пациенты, посетившие мед.учреждения';
-
-COMMENT ON COLUMN croc.patient.surname
-    IS 'Фамилия пациента';
-
-COMMENT ON COLUMN croc.patient.firstname
-    IS 'Имя пациента';
-
-COMMENT ON COLUMN croc.patient.lastname
-    IS 'Отчество пациента';
-
-COMMENT ON COLUMN croc.patient.birth_date
-    IS 'День рождения пациента';
-
-COMMENT ON COLUMN croc.patient.allergy
-    IS 'Аллергии, заявленные/выявленные пациентом (у пациента)';
-
-COMMENT ON TABLE croc.preparation
-    IS 'Препараты, находящиеся в распоряжении мед.учреждений';
-
-COMMENT ON COLUMN croc.preparation.name
-    IS 'Название препарата';
-
-COMMENT ON COLUMN croc.preparation.form
-    IS 'Форма выпуска';
-
-COMMENT ON COLUMN croc.preparation.dosage
-    IS 'Дозировка в единице препарата';
-
-COMMENT ON COLUMN croc.preparation.release_date
-    IS 'Дата выпуска партии';
-
-COMMENT ON COLUMN croc.preparation.expiration_date
-    IS 'Дата истечения срока годности партии';
-
-COMMENT ON COLUMN croc.preparation.manufacturer
-    IS 'Производитель препарата';
-
-COMMENT ON COLUMN croc.preparation.narcotic
-    IS 'Является наркотическим средством?';
-	
-COMMENT ON TABLE croc.preparation_book
-    IS 'Препараты, назначенные пациентам';
-
-COMMENT ON COLUMN croc.preparation_book.patient
-    IS 'Какому пациенту выдан препарат';
-
-COMMENT ON COLUMN croc.preparation_book.preparation
-    IS 'Какой препарат выписан';
-
-COMMENT ON COLUMN croc.preparation_book.quantity
-    IS 'Количество выписанного препарата';
-
-COMMENT ON COLUMN croc.preparation_book.date
-    IS 'Дата и время назначенного приёма';
-
-COMMENT ON TABLE croc.staff
-    IS 'Сотрудники мед.учреждений';
-
-COMMENT ON COLUMN croc.staff.surname
-    IS 'Фамилия сотрудника';
-
-COMMENT ON COLUMN croc.staff.firstname
-    IS 'Имя сотрудника';
-
-COMMENT ON COLUMN croc.staff.lastname
-    IS 'Отчество сотрудника';
-
-COMMENT ON COLUMN croc.staff."position"
-    IS 'Должность сотрудника';
-
-COMMENT ON COLUMN croc.staff.organization
-    IS 'Организация, в которой работает сотрудник';
-
-COMMENT ON COLUMN croc.staff.department
-    IS 'Отделения, в которой работает сотрудник';
-
-COMMENT ON COLUMN croc.staff.ward
-    IS 'Палата, в которой работает сотрудник';
-
 COMMENT ON TABLE croc."user"
     IS 'Список авторизационных данных';
-
 COMMENT ON COLUMN croc."user".login
     IS 'Логин сотрудника';
-
 COMMENT ON COLUMN croc."user".password
     IS 'Пароль сотрудника';
-
 COMMENT ON COLUMN croc."user".staff
     IS 'Чьи авторизационные данные?';
-
 COMMENT ON TABLE croc.ward
     IS 'Палаты в отделениях';
-
-COMMENT ON COLUMN croc.ward.name
-    IS 'Название/номер палаты';
-
-COMMENT ON COLUMN croc.ward.pid
-    IS 'Отделение, к которой относится палата';
-
-COMMENT ON COLUMN croc.ward.activity
-    IS 'Работает ли палата?';
