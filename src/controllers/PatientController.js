@@ -21,7 +21,7 @@ class PatientController {
     async createPatient(req, res) {
         try {
             const { firstname, surname, lastname, birth_date, allergy } = req.body;
-            const patientId = await PatientService.createPatient(new Patientfirstname, surname, lastname, birth_date, allergy);
+            const patientId = await PatientService.createPatient(firstname, surname, lastname, birth_date, allergy);
             res.status(201).json({ id: patientId });
         } catch (error) {
             res.status(400).json({ error: error.message });
