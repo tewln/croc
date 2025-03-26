@@ -10,9 +10,6 @@ class Patient {
     async get() {
         return this;
     }
-    async setID(id){
-        this.id = id;
-    }
 }
 
 export default Patient;
