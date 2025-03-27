@@ -4,11 +4,8 @@ class Patient {
         this.firstname = firstname;
         this.surname = surname;
         this.lastname = lastname;
-        this.date_of_birth = birth_date;
+        this.birth_date = birth_date;
         this.allergy = allergy;
-    }
-    async get() {
-        return this;
     }
 }
 
