@@ -1,41 +1,57 @@
-import PatientService from '../services/PatientService.js';
+import {PatientService} from '../services/PatientService.js';
+const service = new PatientService();
 
-class PatientController {
+export class PatientController {
     async getPatient(req, res) {
         try {
-            const patient = await PatientService.getPatientById(req.params.id);
-            res.json(patient);
+            const patient = await service.getById(req.params.id);
+            res.json({
+                success: true,
+                patients: [patient]
+            });
         } catch (error) {
-            res.status(404).json({ error: error.message });
+            res.status(404).json({
+                error: error.message
+            });
         }
     }
     async getPatients(req, res) {
         try {
-            const patients = await PatientService.getPatients();
-            res.json(patients);
+            const patients = await service.getAll();
+            res.json({
+                success: true,
+                patients: patients
+            });
         } catch (error) {
-            res.status(404).json({ error: error.message });
+            res.status(404).json({
+                succes: false,
+                error: error.message
+            });
         }
     }
 
     async createPatient(req, res) {
         try {
-            const { firstname, surname, lastname, birth_date, allergy } = req.body;
-            const patientId = await PatientService.createPatient(firstname, surname, lastname, birth_date, allergy);
-            res.status(201).json({ id: patientId });
+            const patientData = req.body;
+            const patientId = await service.create(patientData);
+            res.status(201).json({
+                id: patientId
+            });
         } catch (error) {
-            res.status(400).json({ error: error.message });
+            res.status(400).json({
+                error: error.message
+            });
         }
     }
 
     async deletePatient(req, res) {
         try {
-            await PatientService.deletePatient(req.params.id);
+            await service.delete(req.params.id);
             res.status(204).send();
         } catch (error) {
-            res.status(400).json({ error: error.message });
+            res.status(400).json({
+                error: error.message
+            });
         }
     }
 }
-
-export default new PatientController();

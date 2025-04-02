@@ -1,8 +1,8 @@
 import db from '../config/db.js';
-import Patient from '../models/Patient.js';
+import {Patient} from '../models/Patient.js';
 
-class PatientDAO {
-    async getPatientById(id) {
+export class PatientDAO {
+    async getById(id) {
         const query = 'SELECT * FROM croc.patient WHERE id = $1';
         const result = await db.query(query, [id]);
 
@@ -21,7 +21,7 @@ class PatientDAO {
         );
     }
 
-    async getPatients() {
+    async getAll() {
         const result = await db.query('SELECT * FROM croc.patient');
         if (result.rows.length === 0) {
             return [];
@@ -36,21 +36,20 @@ class PatientDAO {
         ));
     }
 
-    async addPatient(firstname, surname, lastname, birth_date, allergy) {
+    async add(patientData) {
+        const patient = Patient.fromData(patientData);
         const query = `
             INSERT INTO croc.patient (firstname, surname, lastname, birth_date, allergy)
             VALUES ($1, $2, $3, $4, $5)
             RETURNING id
         `;
-        const result = await db.query(query, [firstname, surname, lastname, birth_date, allergy]);
+        const result = await db.query(query, patient.getDataByList());
         
-        return result.id;
+        return result.rows[0].id;
     }
 
-    async deletePatientById(id) {
+    async delete(id) {
         const query = 'DELETE FROM croc.patient WHERE id = $1';
         await db.query(query, [id]);
     }
 }
-
-export default new PatientDAO();

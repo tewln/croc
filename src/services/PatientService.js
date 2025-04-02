@@ -1,30 +1,29 @@
-import PatientDAO from '../dao/PatientDAO.js';
-
-class PatientService {
-    async getPatientById(id) {
-        const patientData = await PatientDAO.getPatientById(id);
+import {PatientDAO} from '../dao/PatientDAO.js';
+const dao = new PatientDAO();
+//статик или синглтон?
+export class PatientService {
+    async getById(id) {
+        const patientData = await dao.getById(id);
         if (!patientData) {
             throw new Error('Пациент не найден');
         }
         return patientData;
     }
 
-    async getPatients() {
-        const patientsData = await PatientDAO.getPatients();
+    async getAll() {
+        const patientsData = await dao.getAll();
         if (!patientsData || patientsData.length === 0) {
             throw new Error('Пациенты не найдены');
         }
         return patientsData;
     }
 
-    async createPatient(firstname, surname, lastname, birth_date, allergy) {
-        const patientId = await PatientDAO.addPatient(firstname, surname, lastname, birth_date, allergy);
+    async create(patientData) {
+        const patientId = await dao.add(patientData);
         return patientId;
     }
 
-    async deletePatient(id) {
-        await PatientDAO.deletePatientById(id);
+    async delete(id) {
+        await dao.delete(id);
     }
 }
-
-export default new PatientService();

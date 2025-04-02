@@ -28,5 +28,5 @@ class UserService {
         await UserDAO.deleteUserById(id);
     }
 }
-
+//аналогично PatientService
 export default new UserService();
