@@ -1,11 +1,20 @@
 import db from '../config/db.js';
 import crypt from 'bcrypt';
+import User from '../models/User.js';
 
 class UserDAO {
     async getUserById(id) {
         const query = 'SELECT * FROM croc."user" WHERE login = $1';
         const result = await db.query(query, [login]);
-        return result.rows[0] || null;
+        if(result.rows.length === 0) {
+            return null;
+        }
+        const userData = result.rows[0];
+        return new User(
+            userData.id,
+            userData.login,
+            userData.password
+        );
     }
 
     async addUser(login, password) {
