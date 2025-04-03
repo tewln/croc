@@ -1,8 +1,8 @@
 import db from '../config/db.js';
 import crypt from 'bcrypt';
-import User from '../models/User.js';
+import {User} from '../models/User.js';
 
-class UserDAO {
+export class UserDAO {
     async getUserById(id) {
         const query = 'SELECT * FROM croc."user" WHERE login = $1';
         const result = await db.query(query, [login]);
@@ -44,5 +44,3 @@ class UserDAO {
         await db.query(query, [id]);
     }
 }
-
-export default new UserDAO();

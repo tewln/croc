@@ -1,4 +1,4 @@
-import {PatientDAO} from '../dao/PatientDAO.js';
+import { PatientDAO } from '../dao/PatientDAO.js';
 const dao = new PatientDAO();
 //статик или синглтон?
 export class PatientService {

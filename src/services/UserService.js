@@ -1,7 +1,7 @@
-import UserDAO from '../dao/UserDAO.js';
-import User from '../models/User.js';
+import { UserDAO } from '../dao/UserDAO.js';
+import { User } from '../models/User.js';
 
-class UserService {
+export class UserService {
     async getUserById(id) {
         const userData = await UserDAO.getUserById(id);
         if (!userData) {
@@ -29,4 +29,3 @@ class UserService {
     }
 }
 //аналогично PatientService
-export default new UserService();

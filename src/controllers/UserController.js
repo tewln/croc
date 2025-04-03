@@ -1,6 +1,7 @@
-import UserService from '../services/UserService.js';
+import {UserService} from '../services/UserService.js';
+import { body, validationResult, param, query } from 'express-validator';
 
-class UserController {
+export class UserController {
     async getUser(req, res) {
         try {
             const user = await UserService.getUserById(req.params.id);
@@ -9,6 +10,12 @@ class UserController {
             res.status(404).json({ error: error.message });
         }
     }
+
+    async getOrganizations(req, res) {
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+        if (!token) return res.sendStatus(401);
+    } //Доделать
 
     async createUser(req, res) {
         try {
@@ -40,5 +47,3 @@ class UserController {
     }
 
 }
-
-export default new UserController();

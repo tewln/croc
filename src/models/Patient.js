@@ -1,5 +1,3 @@
-import { json } from "express";
-
 export class Patient {
     constructor(id, firstname, surname, lastname, birth_date, allergy) {
         this.id = id;
