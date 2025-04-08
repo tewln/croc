@@ -5,9 +5,8 @@ import { body } from 'express-validator';
 const router = express.Router();
 
 router.get('/user/:id', UserController.getUser);
-router.get('/user/organizations', UserController.getOrganizations);
 router.post(
-    '/user', [ 
+    '/user/registration', [ 
     body('username')
         .notEmpty().withMessage('Имя пользователя обязательно') 
         .isLength({ min: 3 }).withMessage('Минимум 3 символа'),
@@ -19,7 +18,7 @@ router.post(
         minNumbers: 1,      // ≥ 1 цифра
         }).withMessage('Пароль слишком слабый'),
     ],
-    UserController.createUser);
+    UserController.createUser);//как связать user и staff?
 router.post(
     '/user/login', [
     body('username')
