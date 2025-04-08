@@ -1,6 +1,8 @@
 CREATE SCHEMA IF NOT EXISTS croc;
 
 DROP TABLE IF EXISTS croc."user" CASCADE;
+DROP TABLE IF EXISTS croc.department_staff CASCADE;
+DROP TABLE IF EXISTS croc.organization_staff CASCADE;
 DROP TABLE IF EXISTS croc.patient CASCADE;
 DROP TABLE IF EXISTS croc.anamnesis CASCADE;
 DROP TABLE IF EXISTS croc.diagnosis CASCADE;
@@ -49,9 +51,9 @@ CREATE TABLE croc.ward (
 
   id SERIAL,
   name VARCHAR(100) NOT NULL,
-  pid INT,
+  pid INT NOT NULL,
   activity BOOLEAN NOT NULL DEFAULT TRUE,
-  --Доступность для пациента и персонала
+  --Доступность для пациента
 
   CONSTRAINT ward_id_pkey PRIMARY KEY (id),
   CONSTRAINT ward_pid_fkey FOREIGN KEY (pid)
@@ -64,7 +66,7 @@ COMMENT ON COLUMN croc.ward.name
 COMMENT ON COLUMN croc.ward.pid
     IS 'Отделение, к которой относится палата';
 COMMENT ON COLUMN croc.ward.activity
-    IS 'Работает ли палата?';
+    IS 'Является ли доступной для пацента палатой?';
 
 CREATE TABLE croc.staff (
   id SERIAL,
@@ -72,20 +74,8 @@ CREATE TABLE croc.staff (
   firstname VARCHAR(50) NOT NULL,
   lastname VARCHAR(50),
   "position" VARCHAR(100) NOT NULL,
-  organization INT NOT NULL,
-  department INT NOT NULL,
-  ward INT,
   
-  CONSTRAINT staff_id_pkey PRIMARY KEY (id),
-  CONSTRAINT staff_organization_fkey FOREIGN KEY (organization)
-  REFERENCES croc.organization (id)
-  ON UPDATE CASCADE,
-  CONSTRAINT staff_department_fkey FOREIGN KEY (department)
-  REFERENCES croc.department (id)
-  ON UPDATE CASCADE,
-  CONSTRAINT staff_ward_fkey FOREIGN KEY (ward)
-  REFERENCES croc.ward (id)
-  ON UPDATE CASCADE
+  CONSTRAINT staff_id_pkey PRIMARY KEY (id)
 );
 
 COMMENT ON TABLE croc.staff
@@ -98,12 +88,24 @@ COMMENT ON COLUMN croc.staff.lastname
     IS 'Отчество сотрудника';
 COMMENT ON COLUMN croc.staff."position"
     IS 'Должность сотрудника';
-COMMENT ON COLUMN croc.staff.organization
-    IS 'Организация, в которой работает сотрудник';
-COMMENT ON COLUMN croc.staff.department
-    IS 'Отделения, в которой работает сотрудник';
-COMMENT ON COLUMN croc.staff.ward
-    IS 'Палата, в которой работает сотрудник';
+
+CREATE TABLE croc.department_staff (
+    staff INT,
+    department INT,
+
+    CONSTRAINT department_staff_pkey PRIMARY KEY (staff, department),
+    CONSTRAINT department_staff_staff_fkey FOREIGN KEY (staff)
+    REFERENCES croc.staff (id),
+    CONSTRAINT department_staff_department_fkey FOREIGN KEY (department)
+    REFERENCES croc.department (id)
+);
+
+COMMENT ON TABLE croc.department_staff
+    IS 'Отношение M:M между staff и department';
+COMMENT ON COLUMN croc.department_staff.staff
+    IS 'Описываемый сотрудник';
+COMMENT ON COLUMN croc.department_staff.department
+    IS 'Описываемое отделение';
 
 CREATE TABLE croc.patient (
   id SERIAL,
@@ -169,7 +171,7 @@ CREATE TABLE croc.preparation (
 --Препараты, находящиеся в ходу
   id SERIAL,
   name VARCHAR(100) NOT NULL,
-  form INT NOT NULL,
+  measure_unit INT NOT NULL,
   dosage SMALLINT NOT NULL,
   release_date DATE NOT NULL,
   expiration_date DATE NOT NULL,
@@ -177,7 +179,7 @@ CREATE TABLE croc.preparation (
   narcotic BOOLEAN NOT NULL DEFAULT FALSE,
 
   CONSTRAINT preparation_id_pkey PRIMARY KEY (id),
-  CONSTRAINT preparation_form_fkey FOREIGN KEY (form)
+  CONSTRAINT preparation_measure_unit_fkey FOREIGN KEY (measure_unit)
   REFERENCES croc.measure_unit (id)
   ON UPDATE CASCADE,
   CONSTRAINT preparation_date_valid
@@ -190,10 +192,10 @@ COMMENT ON TABLE croc.preparation
     IS 'Препараты, находящиеся в распоряжении мед.учреждений';
 COMMENT ON COLUMN croc.preparation.name
     IS 'Название препарата';
-COMMENT ON COLUMN croc.preparation.form
-    IS 'Форма выпуска';
+COMMENT ON COLUMN croc.preparation.measure_unit
+    IS 'Мера измерения дозировки препарата';
 COMMENT ON COLUMN croc.preparation.dosage
-    IS 'Дозировка в единице препарата';
+    IS 'Количественная дозировка в единице препарата';
 COMMENT ON COLUMN croc.preparation.release_date
     IS 'Дата выпуска партии';
 COMMENT ON COLUMN croc.preparation.expiration_date
@@ -205,7 +207,7 @@ COMMENT ON COLUMN croc.preparation.narcotic
 
 CREATE TABLE croc.preparation_book (
 --Журнал выдачи препаратов
-  id SERIAL,
+  id BIGSERIAL,
   patient INT NOT NULL,
   preparation INT NOT NULL,
   quantity SMALLINT NOT NULL,
@@ -283,10 +285,8 @@ CREATE TABLE croc.anamnesis (
   discharge_date DATE,
   diagnosis INT,
   mobility BOOLEAN NOT NULL,
-  doctor INT,
+  doctor INT NOT NULL,
   nurse INT,
-  measure INT, /**/
-  preparation INT, /**/
 
   CONSTRAINT anamnesis_id_pkey PRIMARY KEY (id),
   CONSTRAINT anamnesis_department_fkey FOREIGN KEY (department)
@@ -308,13 +308,7 @@ CREATE TABLE croc.anamnesis (
   ON UPDATE RESTRICT,
   CONSTRAINT anamnesis_nurse_fkey FOREIGN KEY (nurse)
   REFERENCES croc.staff (id)
-  ON UPDATE RESTRICT,
-  CONSTRAINT anamnesis_measure_fkey FOREIGN KEY (measure)
-  REFERENCES croc.measure_book (id)
-  ON UPDATE CASCADE,
-  CONSTRAINT anamnesis_preparation_fkey FOREIGN KEY (preparation)
-  REFERENCES croc.preparation_book (id)
-  ON UPDATE CASCADE
+  ON UPDATE RESTRICT
 );
 
 COMMENT ON TABLE croc.anamnesis
@@ -337,10 +331,6 @@ COMMENT ON COLUMN croc.anamnesis.doctor
     IS 'Доктор, за которым закреплён пациент';
 COMMENT ON COLUMN croc.anamnesis.nurse
     IS 'Медсестра, за которой закреплён пациент';
-COMMENT ON COLUMN croc.anamnesis.measure
-    IS 'Проведённые и предстоящие измерения у пациента';
-COMMENT ON COLUMN croc.anamnesis.preparation
-    IS 'Назначенные и выданные препараты';
 
 CREATE TABLE croc."user" (
   id SERIAL NOT NULL,
@@ -363,5 +353,3 @@ COMMENT ON COLUMN croc."user".password
     IS 'Пароль сотрудника';
 COMMENT ON COLUMN croc."user".staff
     IS 'Чьи авторизационные данные?';
-COMMENT ON TABLE croc.ward
-    IS 'Палаты в отделениях';
