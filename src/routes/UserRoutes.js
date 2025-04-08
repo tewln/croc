@@ -1,10 +1,11 @@
 import express from 'express';
 import { UserController } from '../controllers/UserController.js';
 import { body } from 'express-validator';
+const controller = new UserController();
 
 const router = express.Router();
 
-router.get('/user/:id', UserController.getUser);
+router.get('/user/:id', controller.get);
 router.post(
     '/user/registration', [ 
     body('username')
@@ -18,7 +19,7 @@ router.post(
         minNumbers: 1,      // ≥ 1 цифра
         }).withMessage('Пароль слишком слабый'),
     ],
-    UserController.createUser);//как связать user и staff?
+    controller.create);//как связать user и staff?
 router.post(
     '/user/login', [
     body('username')
@@ -26,7 +27,8 @@ router.post(
     body('password')
         .notEmpty().withMessage('Введите пароль'),
   ],
-    UserController.validUser);
-router.delete('/user/:id', UserController.deleteUser);
+    controller.login);
+router.post('/user/logout', controller.logout);
+router.delete('/user/:id', controller.delete);
 
 export default router;

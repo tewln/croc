@@ -1,10 +1,10 @@
 import {UserService} from '../services/UserService.js';
-import { body, validationResult, param, query } from 'express-validator';
+const service = new UserService();
 
 export class UserController {
-    async getUser(req, res) {
+    async get(req, res) {
         try {
-            const user = await UserService.getUserById(req.params.id);
+            const user = await service.getById(req.params.id);
             res.json(user);
         } catch (error) {
             res.status(404).json({ error: error.message });
@@ -17,29 +17,44 @@ export class UserController {
         if (!token) return res.sendStatus(401);
     } //Доделать
 
-    async createUser(req, res) {
+    async create(req, res) {
         try {
             const { firstname, surname, lastname, birth_date, allergy } = req.body;
-            const userId = await UserService.createUser(firstname, surname, lastname, birth_date, allergy);
+            const userId = await service.create(firstname, surname, lastname, birth_date, allergy);
             res.status(201).json({ id: userId });
         } catch (error) {
             res.status(400).json({ error: error.message });
         }
     }
 
-    async validUser(req, res) {
+    async login(req, res) {
         try {
             const { login, password } = req.body;
-            const userID = await UserService.validUser(login, password);
-            //res.status(???).json({ id: userId });
+            const userData = await service.validation(login, password);
+            if (userData) {
+                req.session.isAuthentificated = true;
+                res.status(200).json({ id: userData.id });
+            } else {
+            res.status(401).json({ error: 'Требуется авторизация' });
+            }
         } catch (error) {
             res.status(400).json({ error: error.message });
         }
     }
 
-    async deleteUser(req, res) {
+    async logout(req, res) {
         try {
-            await UserService.deleteUser(req.params.id);
+            req.session.destroy();
+            res.status(204).send();
+        }
+        catch (error) {
+            return res.status(500).json({ error: 'Ошибка выхода' });
+        };
+    }
+
+    async delete(req, res) {
+        try {
+            await service.delete(req.params.id);
             res.status(204).send();
         } catch (error) {
             res.status(400).json({ error: error.message });

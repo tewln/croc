@@ -1,31 +1,27 @@
 import { UserDAO } from '../dao/UserDAO.js';
-import { User } from '../models/User.js';
+const dao = new UserDAO();
 
 export class UserService {
-    async getUserById(id) {
-        const userData = await UserDAO.getUserById(id);
+    async getById(id) {
+        const userData = await dao.getById(id);
         if (!userData) {
             throw new Error('Пациент не найден');
         }
-        return new User(
-            userData.id,
-            userData.login,
-            userData.password
-        );
+        return userData;
     }
 
-    async createUser(login, password) {
-        const userId = await UserDAO.addUser(login, password);
+    async create(login, password) {
+        const userId = await dao.add(login, password);
         return userId;
     }
 
-    async validUser(login) {
-        const userId = await UserDAO.getUserByLogin(login);
-        return userId;
+    async validation(login, password) {
+        const userData = await dao.authentification(login, password);
+        return userData;
     }
 
-    async deleteUser(id) {
-        await UserDAO.deleteUserById(id);
+    async delete(id) {
+        await dao.deleteById(id);
     }
 }
 //аналогично PatientService
