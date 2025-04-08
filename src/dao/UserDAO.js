@@ -23,7 +23,8 @@ export class UserDAO {
             VALUES ($1, $2)
             RETURNING id
         `;
-        const result = await db.query(query, [login, crypt.hash(password, 100)]);
+        const hash = await crypt.hash(password, 100)
+        const result = await db.query(query, [login, hash]);
         return result.id;
     }
 
@@ -31,7 +32,7 @@ export class UserDAO {
         const query = `SELECT * FROM croc."user" WHERE login = $1`;
         const result = await db.query(query, [login]);
         //если такого логина не существует - вернуть ошибку пользователя
-        const isPasswordValid = crypt.compare(result.rows[0].password, password);
+        const isPasswordValid = await crypt.compare(password, result.rows[0].password);
         if (isPasswordValid) {
             //возвращаем 200
         } else {

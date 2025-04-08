@@ -6,7 +6,6 @@ export class PatientController {
         try {
             const patient = await service.getById(req.params.id);
             res.json({
-                success: true,
                 patients: [patient]
             });
         } catch (error) {
@@ -19,12 +18,10 @@ export class PatientController {
         try {
             const patients = await service.getAll();
             res.json({
-                success: true,
                 patients: patients
             });
         } catch (error) {
             res.status(404).json({
-                succes: false,
                 error: error.message
             });
         }
