@@ -20,7 +20,7 @@ app.use(
 
 app.use((req, res, next) => {
     const publicRoutes = ['/api/user/login', 'api/user/registration'];
-    if (publicRoutes.includes(req.path) || req.session.isAuthentificated) {
+    if (publicRoutes.includes(req.path) || req.session.isAuthenticated) {
       next();
     } else {
       res.status(401).json({ error: 'Требуется авторизация' });

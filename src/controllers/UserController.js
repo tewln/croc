@@ -32,8 +32,9 @@ export class UserController {
             const { login, password } = req.body;
             const userData = await service.validation(login, password);
             if (userData) {
-                req.session.isAuthentificated = true;
-                res.status(200).json({ id: userData.id });
+                req.session.isAuthenticated = true;
+                req.session.UserId = userData.id;
+                res.status(204).send();
             } else {
             res.status(401).json({ error: 'Требуется авторизация' });
             }

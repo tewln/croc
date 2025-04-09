@@ -42,7 +42,7 @@ export class UserDAO {
         return result.id;
     }
 
-    async authentification(login, password) {
+    async authentication(login, password) {
         const query = `SELECT * FROM croc."user" WHERE login = $1`;
         const result = await db.query(query, [login]);
         if(result.rows.length === 0) {

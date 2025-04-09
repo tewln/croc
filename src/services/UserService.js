@@ -16,7 +16,7 @@ export class UserService {
     }
 
     async validation(login, password) {
-        const userData = await dao.authentification(login, password);
+        const userData = await dao.authentication(login, password);
         return userData;
     }
 
