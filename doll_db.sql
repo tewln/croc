@@ -26,7 +26,7 @@ INSERT INTO croc.department (name, pid) VALUES
   ('Отдел социально-психологической помощи', 3),
   ('Отдел информационных технологий', 4),
   ('Отдел социально-психологической помощи', 4),
-  ('Диагностическое отделение', 4)
+  ('Диагностическое отделение', 4),
   ('Онкология', 6),
   ('Травматология', 4),
   ('Родильное отделение', 3),
@@ -250,7 +250,7 @@ INSERT INTO croc.anamnesis (department, ward, patient, admission_date, discharge
 
 -- Пользователи
 INSERT INTO croc."user" (login, password, staff) VALUES
-('aivanov','$2b$05$PiXPImSQwHJgm5mwA0Bar.sf.UaZHv8CHLP/EdF2vulMv5eif7qPe',1),
+('user','$argon2id$v=19$m=65536,t=3,p=4$z7mtNbF3kkqafHYUBOYlLA$xaePMtCLn0mZmn51BfAxB9pClRlaogK8mFvP9+lvecI',1),
 ('osmironova','$2b$05$mxdru.Zs5boSjx4eXniAhuLZ/7jWSEmbcByclPNNZGKUd1HEytC2m',2),
 ('dpetrov','$2b$05$Mf/UM7EqoKhEtcNGH2md4OTmx7Ts9kthL747WWvqTrMUGUiiiargu',3),
 ('ekozlova','$2b$05$7x0CiyH.yM1ga2rMD6s9U.UDeGh8EEMsT5T0CCyC5eZmICrR3HWDS',4),
