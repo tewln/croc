@@ -12,9 +12,7 @@ export class UserController {
     }
 
     async getOrganizations(req, res) {
-        const authHeader = req.headers['authorization'];
-        const token = authHeader && authHeader.split(' ')[1];
-        if (!token) return res.sendStatus(401);
+        const organizations = await service.getOrganizations
     } //Доделать
 
     async create(req, res) {
