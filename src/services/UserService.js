@@ -10,8 +10,14 @@ export class UserService {
         return userData;
     }
 
-    async create(login, password) {
-        const userId = await dao.add(login, password);
+    async create(login, password, staff) {
+        const userId = await dao.add(login, password, staff);
+        if (userId === null) {
+            throw new Error('Аккаунт уже существует');
+        }
+        else if(userId === login){
+            throw new Error('Такой логин уже существует');
+        }
         return userId;
     }
 

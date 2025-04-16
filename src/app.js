@@ -19,7 +19,7 @@ app.use(
 );
 
 app.use((req, res, next) => {
-    const publicRoutes = ['/api/user/login', 'api/user/registration'];
+    const publicRoutes = ['/api/user/login', '/api/user/registration', '/api/user/:id'];
     if (publicRoutes.includes(req.path) || req.session.isAuthenticated) {
       next();
     } else {
