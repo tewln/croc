@@ -1,6 +1,6 @@
 import express from 'express';
 import { UserController } from '../controllers/UserController.js';
-import { body } from 'express-validator';
+import { body, validationResult } from 'express-validator';
 const controller = new UserController();
 
 const router = express.Router();
@@ -8,18 +8,26 @@ const router = express.Router();
 router.get('/user/:id', controller.get);
 router.post(
     '/user/registration', [ 
-    body('username')
+    body('login')
         .notEmpty().withMessage('Имя пользователя обязательно') 
         .isLength({ min: 3 }).withMessage('Минимум 3 символа'),
     body('password')
-        .isStrongPassword({   // Сильный пароль:
-        minLength: 8,       // ≥ 8 символов
-        minLowercase: 1,    // ≥ 1 строчная буква
-        minUppercase: 1,    // ≥ 1 заглавная буква
-        minNumbers: 1,      // ≥ 1 цифра
+        .isStrongPassword({
+        minLength: 6,
+        minLowercase: 1,
+        minUppercase: 1,
+        minNumbers: 1,
         }).withMessage('Пароль слишком слабый'),
-    ],
-    controller.create);//как связать user и staff?
+    body('staff')
+        .notEmpty().withMessage('Введите id сотрудника')
+        .isNumeric().withMessage('Некорректный id сотрудника'),
+    ], /*(req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+          return res.status(400).json({ errors: errors.array() });
+        }*/
+        
+    controller.create);
 router.post(
     '/user/login', [
     body('username')
