@@ -1,5 +1,5 @@
 import db from '../config/db.js';
-import {Patient} from '../models/Patient.js';
+import { Patient } from '../models/Patient.js';
 
 export class PatientDAO {
     async getById(id) {
@@ -37,7 +37,6 @@ export class PatientDAO {
     }
 
     async add(patientData) {
-        const patient = Patient.fromData(patientData);
         const query = `
             INSERT INTO croc.patient (firstname, surname, lastname, birth_date, allergy)
             VALUES ($1, $2, $3, $4, $5)
