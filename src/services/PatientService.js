@@ -1,4 +1,5 @@
 import { PatientDAO } from '../dao/PatientDAO.js';
+import { Patient } from '../models/Patient.js';
 const dao = new PatientDAO();
 //статик или синглтон?
 export class PatientService {
@@ -19,7 +20,8 @@ export class PatientService {
     }
 
     async create(patientData) {
-        const patientId = await dao.add(patientData);
+        const patient = Patient.fromData(patientData);
+        const patientId = await dao.add(patient);
         return patientId;
     }
 

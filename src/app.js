@@ -2,7 +2,10 @@ import express from 'express';
 import session from 'express-session';
 import dotenv from 'dotenv';
 import patientRoutes from './routes/PatientRoutes.js';
+import staffRoutes from './routes/StaffRoutes.js';
 import userRoutes from './routes/UserRoutes.js';
+import departmentRoutes from './routes/DepartmentRoutes.js';
+import organizationRoutes from './routes/OrganizationRoutes.js';
 dotenv.config();
 const app = express();
 
@@ -27,7 +30,10 @@ app.use((req, res, next) => {
     }
 });
 
-app.use('/api', userRoutes)
+app.use('/api', userRoutes);
+app.use('/api', staffRoutes);
 app.use('/api', patientRoutes);
+app.use('/api', departmentRoutes);
+app.use('/api', organizationRoutes);
 
 export default app;

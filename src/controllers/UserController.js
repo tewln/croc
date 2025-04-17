@@ -11,10 +11,6 @@ export class UserController {
         }
     }
 
-    async getOrganizations(req, res) {
-        const organizations = await service.getOrganizations
-    } //Доделать
-
     async create(req, res) {
         try {
             const { firstname, surname, lastname, birth_date, allergy } = req.body;
@@ -31,7 +27,8 @@ export class UserController {
             const userData = await service.validation(login, password);
             if (userData) {
                 req.session.isAuthenticated = true;
-                req.session.UserId = userData.id;
+                req.session.UserId = userData.id; //в сервис
+                req.session.StaffId = await service.getStaffIdById(userData.id);
                 res.status(204).send();
             } else {
             res.status(401).json({ error: 'Требуется авторизация' });
