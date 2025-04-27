@@ -45,8 +45,7 @@ export class UserDAO {
                 console.log(isLoginUse);
                 return login;
             }
-            const hash = await crypt.hash(password)
-            const result = await db.query(query, [login, hash, staff]);
+            const result = await db.query(query, [login, password, staff]);
             return result.id;
         }
         return null;
