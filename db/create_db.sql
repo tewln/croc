@@ -171,47 +171,42 @@ CREATE TABLE croc.preparation (
 --Препараты, находящиеся в ходу
   id SERIAL,
   name VARCHAR(100) NOT NULL,
-  measure_unit INT NOT NULL,
-  dosage SMALLINT NOT NULL,
-  release_date DATE NOT NULL,
-  expiration_date DATE NOT NULL,
-  manufacturer VARCHAR(100) NOT NULL,
   narcotic BOOLEAN NOT NULL DEFAULT FALSE,
 
   CONSTRAINT preparation_id_pkey PRIMARY KEY (id),
-  CONSTRAINT preparation_measure_unit_fkey FOREIGN KEY (measure_unit)
-  REFERENCES croc.measure_unit (id)
-  ON UPDATE CASCADE,
-  CONSTRAINT preparation_date_valid
-  CHECK (release_date <= CURRENT_DATE AND release_date <= expiration_date),
-  CONSTRAINT preparation_int_valid
-  CHECK (dosage > 0)
+  CONSTRAINT preparation_name_uniq UNIQUE (name)
 );
 
 COMMENT ON TABLE croc.preparation
     IS 'Препараты, находящиеся в распоряжении мед.учреждений';
 COMMENT ON COLUMN croc.preparation.name
     IS 'Название препарата';
-COMMENT ON COLUMN croc.preparation.measure_unit
-    IS 'Мера измерения дозировки препарата';
-COMMENT ON COLUMN croc.preparation.dosage
-    IS 'Количественная дозировка в единице препарата';
-COMMENT ON COLUMN croc.preparation.release_date
-    IS 'Дата выпуска партии';
-COMMENT ON COLUMN croc.preparation.expiration_date
-    IS 'Дата истечения срока годности партии';
-COMMENT ON COLUMN croc.preparation.manufacturer
-    IS 'Производитель препарата';
 COMMENT ON COLUMN croc.preparation.narcotic
     IS 'Является наркотическим средством?';
+
+CREATE TABLE croc.dosage (
+--Дозировка препарата
+  id SERIAL NOT NULL,
+  dosage INT NOT NULL,
+  preparation_id INT NOT NULL,
+  measure_unit INT NOT NULL,
+  
+  CONSTRAINT dosage_id_pkey PRIMARY KEY (id),
+  CONSTRAINT dosage_preparation_fkey FOREIGN KEY (preparation)
+  REFERENCES croc.preparation (id),
+  CONSTRAINT dosage_measure_unit_fkey FOREIGN KEY (measure_unit)
+  REFERENCES croc.measure_unit (id)
+);
 
 CREATE TABLE croc.preparation_book (
 --Журнал выдачи препаратов
   id BIGSERIAL,
   patient INT NOT NULL,
   preparation INT NOT NULL,
+  dosage INT NOT NULL,
   quantity SMALLINT NOT NULL,
-  date TIMESTAMP,
+  scheduled_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  completed_at TIMESTAMP,
 
   CONSTRAINT preparation_book_id_pkey PRIMARY KEY (id),
   CONSTRAINT preparation_book_patient_fkey FOREIGN KEY (patient)
@@ -220,8 +215,12 @@ CREATE TABLE croc.preparation_book (
   CONSTRAINT prepraration_book_preparation_fkey FOREIGN KEY (preparation)
   REFERENCES croc.preparation (id)
   ON UPDATE CASCADE,
+  CONSTRAINT preparation_book_dosage_fkey FOREIGN KEY (dosage)
+  REFERENCES croc.dosage (dosage),
   CONSTRAINT preparation_book_int_valid
-  CHECK (quantity > 0)
+  CHECK (quantity > 0),
+  CONSTRAINT preparation_book_date_valid
+  CHECK (scheduled_at <= CURRENT_TIMESTAMP AND scheduled_at <= completed_at)
 );
 
 COMMENT ON TABLE croc.preparation_book
@@ -230,10 +229,14 @@ COMMENT ON COLUMN croc.preparation_book.patient
     IS 'Какому пациенту выдан препарат';
 COMMENT ON COLUMN croc.preparation_book.preparation
     IS 'Какой препарат выписан';
+COMMENT ON COLUMN croc.preparation_book.dosage
+    IS 'Дозировка препарата';
 COMMENT ON COLUMN croc.preparation_book.quantity
     IS 'Количество выписанного препарата';
-COMMENT ON COLUMN croc.preparation_book.date
+COMMENT ON COLUMN croc.preparation_book.scheduled_at
     IS 'Дата и время назначенного приёма';
+COMMENT ON COLUMN croc.preparation_book.completed_at
+    IS 'Дата и время фактического приёма';
 
 CREATE TABLE croc.measure (
 --Проводимые измерения
@@ -256,7 +259,8 @@ CREATE TABLE croc.measure_book (
   id SERIAL,
   patient INT NOT NULL,
   measure_type INT NOT NULL,
-  date TIMESTAMP NOT NULL,
+  scheduled_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  completed_at TIMESTAMP,
 
   CONSTRAINT measure_book_id_pkey PRIMARY KEY (id),
   CONSTRAINT measure_book_patient_fkey FOREIGN KEY (patient)
@@ -264,7 +268,9 @@ CREATE TABLE croc.measure_book (
   ON UPDATE RESTRICT,
   CONSTRAINT measure_book_measure_fkey FOREIGN KEY (measure_type)
   REFERENCES croc.measure (id)
-  ON UPDATE CASCADE
+  ON UPDATE CASCADE,
+  CONSTRAINT preparation_book_date_valid
+  CHECK (scheduled_at <= CURRENT_TIMESTAMP AND scheduled_at <= completed_at)
 );
 
 COMMENT ON TABLE croc.measure_book

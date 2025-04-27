@@ -10,7 +10,7 @@ export class MeasureBook {
     toJSON() {
         return {
             id: this.id,
-            measure_type: this.measure_type,
+            measureType: this.measure_type,
             patient: this.patient,
             scheduledAt: this.scheduled_at,
             completedAt: this.completed_at
@@ -18,14 +18,19 @@ export class MeasureBook {
     }
 
     getDataByList() {
-        return [this.patient, this.measure_type, this.scheduled_at, this.completed_at];
+        return [
+            this.patient, 
+            this.measure_type, 
+            this.scheduled_at,
+            this.completed_at
+        ];
     }
 
     static fromData(data) {
         return new MeasureBook(
             data.id,
-            data.measure_type,
             data.patient,
+            data.measureType,
             data.scheduledAt,
             data.completedAt
         );

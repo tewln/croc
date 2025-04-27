@@ -28,5 +28,4 @@ export class MeasureService {
     async update(id, date) {
         await dao.update(id, date);
     }
-
 }

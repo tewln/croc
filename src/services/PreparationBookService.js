@@ -3,21 +3,28 @@ import { PreparationBook } from '../models/PreparationBook.js';
 const dao = new PreparationBookDAO();
 
 export class PreparationBookService {
-    async getByPatientId(patientId) {
-        const measureData = await dao.getByPatientId(patientId);
-        if (!measureData) {
-            throw new Error('Измерения не найдены');
+        async getByPatientId(patientId) {
+        const preparations = await dao.getByPatientId(patientId);
+        if (!preparations) {
+            throw new Error('Назначения не найдены');
         }
-        return measureData;
+        return preparations;
     }
 
-    async create(preparationData) {
-        const preparation = PreparationBook.fromData(preparationData);
-        const preparationId = await dao.add(preparation);
-        return preparationId;
+    async create(data) {
+        const preparationBook = new PreparationBook(
+            null,
+            data.patient,
+            data.preparation,
+            data.dosage,
+            data.quantity,
+            data.scheduledAt,
+            null
+        );
+        return await this.dao.add(preparationBook);
     }
 
-    async update(id, date) {
-        await dao.update(id, date);
+    async update(id, completedAt) {
+        await this.dao.update(id, completedAt);
     }
 }
