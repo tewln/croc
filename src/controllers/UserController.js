@@ -11,17 +11,13 @@ export class UserController {
         }
     }
 
-    async getOrganizations(req, res) {
-        const organizations = await service.getOrganizations
-    } //Доделать
-
     async create(req, res) {
         try {
-            const { firstname, surname, lastname, birth_date, allergy } = req.body;
-            const userId = await service.create(firstname, surname, lastname, birth_date, allergy);
+            const { login, password, staff } = req.body;
+            const userId = await service.create(login, password, staff);
             res.status(201).json({ id: userId });
         } catch (error) {
-            res.status(400).json({ error: error.message });
+            res.status(409).json({ error: error.message });
         }
     }
 
@@ -31,7 +27,8 @@ export class UserController {
             const userData = await service.validation(login, password);
             if (userData) {
                 req.session.isAuthenticated = true;
-                req.session.UserId = userData.id;
+                req.session.UserId = userData.id; //в сервис
+                req.session.StaffId = await service.getStaffIdById(userData.id);
                 res.status(204).send();
             } else {
             res.status(401).json({ error: 'Требуется авторизация' });
@@ -56,7 +53,7 @@ export class UserController {
             await service.delete(req.params.id);
             res.status(204).send();
         } catch (error) {
-            res.status(400).json({ error: error.message });
+            res.status(404).json({ error: error.message });
         }
     }
 
