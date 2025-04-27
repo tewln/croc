@@ -1,9 +1,12 @@
 import db from '../config/db.js';
-import { Patient } from '../models/Patient.js';
+import { PreparationBook } from '../models/PreparationBook.js';
 
-export class PatientDAO {
-    async getById(id) {
-        const query = 'SELECT * FROM croc.patient WHERE id = $1';
+export class PreparationBookDAO {
+    async getByPatientId(id) {
+        const query = `SELECT *
+                       FROM croc.preparation_book pb
+                       JOIN croc.patient pa ON pa.id = pb.patient
+                        WHERE id = $1`;
         const result = await db.query(query, [id]);
 
         if (result.rows.length === 0) {

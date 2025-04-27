@@ -15,7 +15,8 @@ export class UserService {
     }
 
     async create(login, password, staff) {
-        const userId = await dao.add(login, password, staff);
+        const hash = await crypt.hash(password)
+        const userId = await dao.add(login, hash, staff);
         if (userId === null) {
             throw new Error('Аккаунт уже существует');
         }
