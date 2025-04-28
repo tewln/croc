@@ -7,6 +7,7 @@ DROP TABLE IF EXISTS croc.patient CASCADE;
 DROP TABLE IF EXISTS croc.anamnesis CASCADE;
 DROP TABLE IF EXISTS croc.diagnosis CASCADE;
 DROP TABLE IF EXISTS croc.measure_unit CASCADE;
+DROP TABLE IF EXISTS croc.dosage CASCADE;
 DROP TABLE IF EXISTS croc.preparation CASCADE;
 DROP TABLE IF EXISTS croc.measure CASCADE;
 DROP TABLE IF EXISTS croc.measure_book CASCADE;
@@ -192,10 +193,11 @@ CREATE TABLE croc.dosage (
   measure_unit INT NOT NULL,
   
   CONSTRAINT dosage_id_pkey PRIMARY KEY (id),
-  CONSTRAINT dosage_preparation_fkey FOREIGN KEY (preparation)
+  CONSTRAINT dosage_preparation_id_fkey FOREIGN KEY (preparation_id)
   REFERENCES croc.preparation (id),
   CONSTRAINT dosage_measure_unit_fkey FOREIGN KEY (measure_unit)
-  REFERENCES croc.measure_unit (id)
+  REFERENCES croc.measure_unit (id),
+  CONSTRAINT dosage_preparation_unique UNIQUE (preparation_id, dosage)
 );
 
 CREATE TABLE croc.preparation_book (
@@ -216,11 +218,9 @@ CREATE TABLE croc.preparation_book (
   REFERENCES croc.preparation (id)
   ON UPDATE CASCADE,
   CONSTRAINT preparation_book_dosage_fkey FOREIGN KEY (dosage)
-  REFERENCES croc.dosage (dosage),
+  REFERENCES croc.dosage (id),
   CONSTRAINT preparation_book_int_valid
-  CHECK (quantity > 0),
-  CONSTRAINT preparation_book_date_valid
-  CHECK (scheduled_at <= CURRENT_TIMESTAMP AND scheduled_at <= completed_at)
+  CHECK (quantity > 0)
 );
 
 COMMENT ON TABLE croc.preparation_book
@@ -259,6 +259,7 @@ CREATE TABLE croc.measure_book (
   id SERIAL,
   patient INT NOT NULL,
   measure_type INT NOT NULL,
+  result NUMERIC,
   scheduled_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   completed_at TIMESTAMP,
 
@@ -268,19 +269,21 @@ CREATE TABLE croc.measure_book (
   ON UPDATE RESTRICT,
   CONSTRAINT measure_book_measure_fkey FOREIGN KEY (measure_type)
   REFERENCES croc.measure (id)
-  ON UPDATE CASCADE,
-  CONSTRAINT preparation_book_date_valid
-  CHECK (scheduled_at <= CURRENT_TIMESTAMP AND scheduled_at <= completed_at)
+  ON UPDATE CASCADE
 );
 
 COMMENT ON TABLE croc.measure_book
     IS 'Проводимые измерения у пациентов';
 COMMENT ON COLUMN croc.measure_book.measure_type
     IS 'Какое измерение проводится';
+COMMENT ON COLUMN croc.measure_book.result
+	IS 'Результаты измерения';
 COMMENT ON COLUMN croc.measure_book.patient
     IS 'Пациент, у которого берётся измерение';
-COMMENT ON COLUMN croc.measure_book.date
+COMMENT ON COLUMN croc.measure_book.scheduled_at
     IS 'Дата и время, назначенные для проведения измерения';
+COMMENT ON COLUMN croc.measure_book.completed_at
+    IS 'Дата и время, фактического проведения измерения';
 
 CREATE TABLE croc.anamnesis (
   id BIGSERIAL,
@@ -304,8 +307,6 @@ CREATE TABLE croc.anamnesis (
   CONSTRAINT anamnesis_patient_fkey FOREIGN KEY (patient)
   REFERENCES croc.patient (id)
   ON UPDATE CASCADE,
-  CONSTRAINT anamnesis_date_valid
-  CHECK (admission_date <= discharge_date AND admission_date <= CURRENT_TIMESTAMP),
   CONSTRAINT anamnesis_diagnosis_fkey FOREIGN KEY (diagnosis)
   REFERENCES croc.diagnosis (id)
   ON UPDATE CASCADE,

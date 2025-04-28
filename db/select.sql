@@ -17,7 +17,7 @@ INSERT INTO croc.patient (firstname, surname, lastname, birth_date, allergy)
        VALUES ($1, $2, $3, $4, $5)
  RETURNING id;
 --найти пациента по айди
-SELECT * FROM croc.patient WHERE id = $1
+SELECT * FROM croc.patient WHERE id = $1;
 --найти сотрудника по юзер айди
 SELECT st.id,
        st.surname,
@@ -26,13 +26,13 @@ SELECT st.id,
        st.position
   FROM croc.staff st
        JOIN croc.user us ON st.id = us.staff
- WHERE us.id = $1
+ WHERE us.id = $1;
 --регистрация
 INSERT INTO croc.user (login, password)
        VALUES ($1, $2)
  RETURNING id;
 --получить учётную запись по логину
-SELECT * FROM croc.user WHERE login = $1
+SELECT * FROM croc.user WHERE login = $1;
 --диагноз
 SELECT *
   FROM croc.user us
