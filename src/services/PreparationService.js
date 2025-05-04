@@ -1,7 +1,7 @@
 import { PreparationDAO } from '../dao/PreparationDAO.js';
 import { Preparation } from '../models/Preparation.js';
 const dao = new PreparationDAO();
-
+//not used
 export class PreparationService {
         async getAll() {
         const preparations = await dao.getAll();

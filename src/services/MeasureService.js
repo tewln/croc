@@ -1,7 +1,7 @@
 import { MeasureDAO } from '../dao/MeasureDAO.js';
 import { Measure } from '../models/Measure.js';
 const dao = new MeasureDAO();
-
+//not used
 export class MeasureService {
     async getOfMBId(measureBookId) {
         const measureData = await dao.getById(measureBookId);

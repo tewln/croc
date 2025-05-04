@@ -1,6 +1,6 @@
 import { PreparationService } from '../services/PreparationService.js';
 const service = new PreparationService();
-
+//not used
 export class PreparationController {
     async getAll(req, res) {
         try {

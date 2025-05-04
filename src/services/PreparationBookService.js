@@ -1,7 +1,7 @@
 import { PreparationBookDAO } from '../dao/PreparationBookDAO.js';
 import { PreparationBook } from '../models/PreparationBook.js';
 const dao = new PreparationBookDAO();
-
+//not used
 export class PreparationBookService {
         async getByPatientId(patientId) {
         const preparations = await dao.getByPatientId(patientId);
@@ -21,10 +21,10 @@ export class PreparationBookService {
             data.scheduledAt,
             null
         );
-        return await this.dao.add(preparationBook);
+        return await dao.add(preparationBook);
     }
 
     async update(id, completedAt) {
-        await this.dao.update(id, completedAt);
+        await dao.update(id, completedAt);
     }
 }
