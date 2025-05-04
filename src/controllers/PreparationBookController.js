@@ -1,7 +1,7 @@
 import { PreparationBookService } from '../services/PreparationBookService.js';
 const service = new PreparationBookService();
-//not used
 export class PreparationBookController {
+//not used
     async getPreparationsOfPatient(req, res) {
         try {
             const preparations = await service.getByPatientId(req.params.id);
@@ -15,6 +15,24 @@ export class PreparationBookController {
         }
     }
 
+    async getPreparationsOfPatientDyData(req, res) {
+        try {
+            const taskInformation = await service.getByPatientData(
+                req.body.scheduledAt,
+                req.body.patientFullName,
+                req.body.birthDate,
+                req.body.preparationName
+            );
+            res.json({
+                task: taskInformation
+            });
+        } catch (error) {
+            res.status(404).json({
+                error: error.message
+            });
+        }
+    }
+//not used
     async completePreparation(req, res) {
         try {
             await service.update(req.params.id, req.body.completedAt);
@@ -23,7 +41,7 @@ export class PreparationBookController {
             res.status(400).json({ error: error.message });
         }
     }
-
+//not used
     async createPreparation(req, res) {
         try {
             const preparationId = await service.create({

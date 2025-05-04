@@ -6,6 +6,7 @@ import patientRoutes from './routes/PatientRoutes.js';
 import staffRoutes from './routes/StaffRoutes.js';
 import userRoutes from './routes/UserRoutes.js';
 import departmentRoutes from './routes/DepartmentRoutes.js';
+import preparationBookRoutes from './routes/PreparationBookRoutes.js'
 import organizationRoutes from './routes/OrganizationRoutes.js';
 import taskRoutes from './routes/TasksRoutes.js';
 dotenv.config();
@@ -43,6 +44,7 @@ app.use('/api', staffRoutes);
 app.use('/api', patientRoutes);
 app.use('/api', departmentRoutes);
 app.use('/api', organizationRoutes);
+app.use('/api', preparationBookRoutes);
 app.use('/api', taskRoutes);
 
 export default app;
