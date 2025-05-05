@@ -1,5 +1,6 @@
 import { PreparationBookDAO } from '../dao/PreparationBookDAO.js';
 import { PreparationBook } from '../models/PreparationBook.js';
+import { TaskInformation } from '../models/TaskInformation.js';
 const dao = new PreparationBookDAO();
 
 export class PreparationBookService {
@@ -18,7 +19,8 @@ export class PreparationBookService {
         const firstname = parts[1] || null;
         const lastname = parts.length > 2 ? parts[2] : null;
         const result = await dao.getByData(scheduledAt, surname, firstname, lastname, birthDate, preparationName);
-        return result;
+        const taskInfo = TaskInformation.fromData(result)
+        return taskInfo;
     }
 //not used
     async create(data) {

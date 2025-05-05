@@ -1,7 +1,8 @@
 import { MeasureBookService } from '../services/MeasureBookService.js';
 const service = new MeasureBookService();
-//not used
+
 export class MeasureBookController {
+//not used
     async getMeasuresOfPatient(req, res) {
         try {
             const measures = await service.getByPatientId(req.params.id);
@@ -15,6 +16,24 @@ export class MeasureBookController {
         }
     }
 
+    async getMeasuresOfPatientByData(req, res) {
+        try {
+            const taskInfo = await service.getByPatientData(
+                req.body.scheduledAt,
+                req.body.patientFullName,
+                req.body.birthDate,
+                req.body.measureName
+            );
+            res.json({
+                task: [taskInfo]
+            });
+        } catch (error) {
+            res.status(404).json({
+                error: error.message
+            });
+        }
+    }
+//not used
     async createMeasure(req, res) {
         try {
             const measureId = await service.create({
@@ -31,7 +50,7 @@ export class MeasureBookController {
             });
         }
     }
-
+//not used
     async completeMeasure(req, res) {
         try {
             await service.update(req.params.id, req.body.completedAt);

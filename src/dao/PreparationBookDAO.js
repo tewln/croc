@@ -30,38 +30,44 @@ export class PreparationBookDAO {
                                        p.surname || ' ' || p.firstname || ' ' || COALESCE(p.lastname, '') AS patient_full_name,
                                        p.birth_date,
                                        w.name AS ward_name,
-									   st.surname || ' ' || st.firstname || ' ' || COALESCE(st.lastname, '') AS doctor_full_name,
-									   d.name AS diagnosis,
-									   p.allergy
+                                       st.surname || ' ' || st.firstname || ' ' || COALESCE(st.lastname, '') AS doctor_full_name,
+                                       d.name AS diagnosis,
+                                       p.allergy
                                   FROM croc.patient p
                                        LEFT JOIN croc.anamnesis a ON p.id = a.patient
-									   LEFT JOIN croc.diagnosis d ON d.id = a.diagnosis
+                                       LEFT JOIN croc.diagnosis d ON d.id = a.diagnosis
                                        LEFT JOIN croc.ward w ON a.ward = w.id
-									   LEFT JOIN croc.staff st ON st.id = a.doctor
+                                       LEFT JOIN croc.staff st ON st.id = a.doctor
                                  WHERE a.discharge_date IS NULL AND
-                              			p.surname = $1 AND
-                              			p.firstname = $2 AND
-                              			p.lastname = $3 AND
-                              			p.birth_date = $4
+                                       p.surname = $1 AND
+                                       p.firstname = $2 AND
+                                       p.lastname = $3 AND
+                                       p.birth_date = $4
                             )
-                                    SELECT scheduled_at,
-											patient_full_name,
-											birth_date,
-											ward_name,
-											doctor_full_name,
-											diagnosis,
-											allergy,
-											pr.name,
-											pb.quantity,
-											pr.narcotic
-                                      FROM croc.preparation_book pb
-                                           JOIN patient_data pd ON pb.patient = pd.id
-                                           JOIN croc.preparation pr ON pb.preparation = pr.id
-                             WHERE pb.scheduled_at = $5 AND
-                              		pr.name = $6;`
+                     SELECT scheduled_at,
+                            patient_full_name,
+                            birth_date,
+                            ward_name,
+                            doctor_full_name,
+                            diagnosis,
+                            allergy,
+                            pr.name,
+                            d.dosage,
+                            mu.measure_unit,
+                            pb.quantity,
+                            pr.narcotic,
+                            'preparation' AS task_type
+                       FROM croc.preparation_book pb
+                            JOIN patient_data pd ON pb.patient = pd.id
+                            JOIN croc.preparation pr ON pb.preparation = pr.id
+                            JOIN croc.dosage d ON d.id = pb.dosage
+                            JOIN croc.measure_unit mu ON mu.id = d.measure_unit
+                      WHERE pb.scheduled_at = $5 AND
+                            pr.name = $6;`
         const result = await db.query(query, [surname, firstname, lastname, birth_date, scheduled_at, preparation])
-        return result.rows;
+        return result.rows[0];
     }
+
     async add(preparationBook) {
         const query = `
             INSERT INTO croc.preparation_book (patient, preparation, dosage, quantity, scheduled_at)

@@ -15,16 +15,16 @@ export class PreparationBookController {
         }
     }
 
-    async getPreparationsOfPatientDyData(req, res) {
+    async getPreparationsOfPatientByData(req, res) {
         try {
-            const taskInformation = await service.getByPatientData(
+            const taskInfo = await service.getByPatientData(
                 req.body.scheduledAt,
                 req.body.patientFullName,
                 req.body.birthDate,
                 req.body.preparationName
             );
             res.json({
-                task: taskInformation
+                task: [taskInfo]
             });
         } catch (error) {
             res.status(404).json({

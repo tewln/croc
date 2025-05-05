@@ -29,14 +29,4 @@ export class Task {
             this.preparations
         ];
     }
-    static fromData(data) {
-        return new Patient(
-            data.scheduledAt,
-            data.completedAt,
-            data.patient,
-            data.ward,
-            data.measures,
-            data.preparations
-        );
-    }
 }
