@@ -14,8 +14,8 @@ export class StaffService {
         const staff = await dao.getByUserId(user_id);
         return staff.id;
     }
-    async getHeaderByStaffId(staff_id, organization_id, department_id){
-        const header = await dao.getHeaderByStaffId(staff_id, organization_id, department_id);
+    async getHeaderByStaffId(staff_id, nameOrg, nameDep){
+        const header = await dao.getHeaderByStaffId(staff_id, nameOrg, nameDep);
         return header;
     }
 }

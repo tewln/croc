@@ -1,4 +1,8 @@
 import { StaffService } from '../services/StaffService.js';
+import { OrganizationService } from '../services/OrganizationService.js';
+import { DepartmentService } from '../services/DepartmentService.js';
+const orgService = new OrganizationService();
+const depService = new DepartmentService();
 const service = new StaffService();
 
 export class StaffController {
@@ -28,8 +32,12 @@ export class StaffController {
         try {
             const staff = req.session.StaffId;
             const organization = req.session.OrganizationId;
+            const org = await orgService.getById(organization);
+            const nameOrg = org.name;
             const department = req.session.DepartmentId;
-            const header = await service.getHeaderByStaffId(staff, organization, department);
+            const dep = await depService.getById(department);
+            const nameDep = dep.name;
+            const header = await service.getHeaderByStaffId(staff, nameOrg, nameDep);
             res.json({
                 header: [header]
             });

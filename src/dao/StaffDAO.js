@@ -32,8 +32,8 @@ export class StaffDAO {
             staffData.position,
         );
     }
-    async getHeaderByStaffId(staff_id, organization_id, department_id) {
-        const query = `SELECT surname || ' ' || firstname || ' ' || COALESCE(.lastname, '') AS staff_full_name,
+    async getHeaderByStaffId(staff_id, nameOrg, nameDep) {
+        const query = `SELECT surname || ' ' || firstname || ' ' || COALESCE(lastname, '') AS staff_full_name,
                               position
                         FROM croc.staff 
                         WHERE id = $1`;
@@ -42,8 +42,8 @@ export class StaffDAO {
         return new Header(
             staffData.staff_full_name,
             staffData.position,
-            organization_id,
-            department_id
+            nameOrg, 
+            nameDep
         );
     }
 }

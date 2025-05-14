@@ -16,7 +16,8 @@ export class DepartmentController {
     }
     async getDepartmentsOfStaff(req, res) {
         try {
-            const departments = await service.getDepartmentsOf(req.session.StaffId);
+            const { organizationId } = req.body;
+            const departments = await service.getDepartmentsOf(req.session.StaffId, organizationId);
             res.json({
                 departments: departments
             });

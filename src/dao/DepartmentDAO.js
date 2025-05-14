@@ -15,11 +15,13 @@ export class DepartmentDAO {
             departmentData.pid
         );
     }
-    async getDepartmentsOf(staff_id) {
+    async getDepartmentsOf(staff_id, organization_id) {
         const query = `SELECT dep.id, dep.name, dep.pid FROM croc.department dep
                           JOIN croc.department_staff dep_st ON dep.id = dep_st.department
-                        WHERE dep_st.staff = $1`;
-        const result = await db.query(query, [staff_id]);
+                          JOIN croc.organization org ON dep.pid = org.id
+                        WHERE dep_st.staff = $1
+                        AND org.id = $2`;
+        const result = await db.query(query, [staff_id, organization_id]);
         if(result.rows.length === 0) {
             return [];
         }
