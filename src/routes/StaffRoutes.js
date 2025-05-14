@@ -5,5 +5,6 @@ const router = express.Router();
 
 router.get('staff/:id', controller.getById);
 router.put('/staff', controller.setStaffId);
+router.get('/staff/header', controller.setStaffId);
 
 export default router;

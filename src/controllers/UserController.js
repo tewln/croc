@@ -57,4 +57,17 @@ export class UserController {
         }
     }
 
+    async saveInfo(req, res) {
+        try {
+            const { organizationId, departmentId } = req.body;
+            if (!organizationId || !departmentId) {
+                return res.status(400).json({ error: error.message });
+            }
+            req.session.OrganizationId = organizationId;
+            req.session.DepartmentId = departmentId;
+            res.status(204).send();
+        } catch (error) {
+            res.status(400).json({ error: error.message });
+        }
+    }
 }

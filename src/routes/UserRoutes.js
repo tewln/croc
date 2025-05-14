@@ -38,5 +38,6 @@ router.post(
     controller.login);
 router.post('/user/logout', controller.logout);
 router.delete('/user/:id', controller.delete);
+router.post('/user/save-info', controller.saveInfo);
 
 export default router;
