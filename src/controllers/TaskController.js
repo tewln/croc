@@ -4,7 +4,7 @@ const service = new TaskService();
 export class TaskController {
     async getInPeriod(req, res) {
         try {
-            const tasks = await service.getInPeriod(req.query.dateFrom, req.query.dateTo);
+            const tasks = await service.getInPeriod(req.query.dateFrom, req.query.dateTo, req.session.DepartmentId);
             res.json({
                 tasks: [tasks]
             });

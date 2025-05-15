@@ -2,7 +2,7 @@ import db from '../config/db.js';
 import {Task} from '../models/Task.js';
 
 export class TaskDAO {
-    async getInPeriod(date_from, date_to) {
+    async getInPeriod(date_from, date_to, department) {
         const query =      `WITH patient_data AS (
                                 SELECT p.id, 
                                        p.surname || ' ' || p.firstname || ' ' || COALESCE(p.lastname, '') AS patient_full_name,
@@ -12,6 +12,7 @@ export class TaskDAO {
                                        LEFT JOIN croc.anamnesis a ON p.id = a.patient
                                        LEFT JOIN croc.ward w ON a.ward = w.id
                                  WHERE a.discharge_date IS NULL
+                                 AND a.department = $3
                             )
                             SELECT scheduled_at,
                                    completed_at,
@@ -46,7 +47,7 @@ export class TaskDAO {
                              WHERE scheduled_at BETWEEN $1::TIMESTAMP AND $2::TIMESTAMP
                                    AND completed_at is null
                           ORDER BY scheduled_at;`;
-        const result = await db.query(query,[date_from, date_to]);
+        const result = await db.query(query,[date_from, date_to, department]);
         return result.rows.map(task => new Task(
             task.scheduled_at,
             task.completed_at,
