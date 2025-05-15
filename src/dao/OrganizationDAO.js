@@ -18,7 +18,8 @@ export class OrganizationDAO {
         const query = `SELECT org.id, org.name FROM croc.organization org
                           JOIN croc.department dep ON dep.pid = org.id
                           JOIN croc.department_staff dep_st ON dep.id = dep_st.department
-                        WHERE dep_st.staff = $1`;
+                        WHERE dep_st.staff = $1
+                        GROUP BY org.id`;
         const result = await db.query(query, [staff_id]);
         if(result.rows.length === 0) {
             return [];
