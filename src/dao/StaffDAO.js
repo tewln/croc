@@ -1,5 +1,4 @@
 import db from '../config/db.js';
-import { Header } from '../models/Header.js';
 import {Staff} from '../models/Staff.js';
 
 export class StaffDAO {
@@ -32,18 +31,12 @@ export class StaffDAO {
             staffData.position,
         );
     }
-    async getHeaderByStaffId(staff_id, nameOrg, nameDep) {
+    async getInfoByStaffId(staff_id) {
         const query = `SELECT surname || ' ' || firstname || ' ' || COALESCE(lastname, '') AS staff_full_name,
                               position
                         FROM croc.staff 
                         WHERE id = $1`;
         const result = await db.query(query, [staff_id]);
-        const staffData = result.rows[0];
-        return new Header(
-            staffData.staff_full_name,
-            staffData.position,
-            nameOrg, 
-            nameDep
-        );
+        return result.rows[0];
     }
 }

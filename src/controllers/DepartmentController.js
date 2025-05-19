@@ -4,9 +4,9 @@ const service = new DepartmentService();
 export class DepartmentController {
     async getDepartment(req, res) {
         try {
-            const department = await service.getById(req.params.id);
+            const departments = await service.getById(req.params.id);
             res.json({
-                departments: [department]
+                departments: departments
             });
         } catch (error) {
             res.status(404).json({

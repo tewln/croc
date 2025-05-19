@@ -13,12 +13,8 @@ export class PreparationBookService {
         return preparations;
     }
 
-    async getByPatientData(scheduledAt, patientFullName, birthDate, preparationName) {
-        const parts = patientFullName.trim().split(/\s+/);
-        const surname = parts[0] || null;
-        const firstname = parts[1] || null;
-        const lastname = parts.length > 2 ? parts[2] : null;
-        const result = await dao.getByData(scheduledAt, surname, firstname, lastname, birthDate, preparationName);
+    async getByPatientData(preparation_book_id) {
+        const result = await dao.getByData(preparation_book_id);
         const taskInfo = TaskInformation.fromData(result)
         return taskInfo;
     }
@@ -35,8 +31,11 @@ export class PreparationBookService {
         );
         return await dao.add(preparationBook);
     }
-//not used
-    async update(id, completedAt) {
-        await dao.update(id, completedAt);
+
+    async update(preparation_book_id, completed_at) {
+        await dao.update(
+            preparation_book_id,
+            completed_at
+        );
     }
 }

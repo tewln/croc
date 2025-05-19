@@ -2,7 +2,7 @@ import { PreparationBookService } from '../services/PreparationBookService.js';
 const service = new PreparationBookService();
 export class PreparationBookController {
 //not used
-    async getPreparationsOfPatient(req, res) {
+    async getPreparationsByPatientId(req, res) {
         try {
             const preparations = await service.getByPatientId(req.params.id);
             res.json({
@@ -15,13 +15,10 @@ export class PreparationBookController {
         }
     }
 
-    async getPreparationsOfPatientByData(req, res) {
+    async getPreparationData(req, res) {
         try {
             const taskInfo = await service.getByPatientData(
-                req.body.scheduledAt,
-                req.body.patientFullName,
-                req.body.birthDate,
-                req.body.preparationName
+                req.params.id
             );
             res.json({
                 task: [taskInfo]
@@ -32,13 +29,18 @@ export class PreparationBookController {
             });
         }
     }
-//not used
+
     async completePreparation(req, res) {
         try {
-            await service.update(req.params.id, req.body.completedAt);
-            res.status(204).send();
+            await service.update(
+                req.params.id,
+                req.body.completedAt
+            );
+            res.status(200).send();
         } catch (error) {
-            res.status(400).json({ error: error.message });
+            res.status(400).json({
+                error: error.message
+            });
         }
     }
 //not used

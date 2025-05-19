@@ -1,8 +1,4 @@
 import { StaffService } from '../services/StaffService.js';
-import { OrganizationService } from '../services/OrganizationService.js';
-import { DepartmentService } from '../services/DepartmentService.js';
-const orgService = new OrganizationService();
-const depService = new DepartmentService();
 const service = new StaffService();
 
 export class StaffController {
@@ -30,14 +26,7 @@ export class StaffController {
     }
     async getHeader(req, res) {
         try {
-            const staff = req.session.StaffId;
-            const organization = req.session.OrganizationId;
-            const org = await orgService.getById(organization);
-            const nameOrg = org.name;
-            const department = req.session.DepartmentId;
-            const dep = await depService.getById(department);
-            const nameDep = dep.name;
-            const header = await service.getHeaderByStaffId(staff, nameOrg, nameDep);
+            const header = await service.getHeaderByStaffId(req.session.StaffId, req.session.DepartmentId, req.session.OrganizationId);
             res.json({
                 header: [header]
             });

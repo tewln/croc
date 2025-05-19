@@ -6,7 +6,7 @@ export class TaskController {
         try {
             const tasks = await service.getInPeriod(req.query.dateFrom, req.query.dateTo, req.session.DepartmentId);
             res.json({
-                tasks: [tasks]
+                tasks: tasks
             });
         } catch (error) {
             res.status(404).json({

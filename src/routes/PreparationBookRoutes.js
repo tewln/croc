@@ -3,9 +3,9 @@ import { PreparationBookController } from '../controllers/PreparationBookControl
 const controller = new PreparationBookController();
 const router = express.Router();
 //not used
-router.get('/preparation-book/patient/:id', controller.getPreparationsOfPatient);
+router.get('/preparation-book/patient/:id', controller.getPreparationsByPatientId);
 router.post('/preparation-book', controller.createPreparation);
-router.put('/preparation-book/:id/complete', controller.completePreparation);
-router.get('/preparation-book/task', controller.getPreparationsOfPatientByData);
+router.patch('/preparation-book/task/:id', controller.completePreparation);
+router.get('/preparation-book/task/:id', controller.getPreparationData);
 
 export default router;

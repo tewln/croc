@@ -13,12 +13,8 @@ export class MeasureBookService {
         return measureData;
     }
 
-    async getByPatientData(scheduledAt, patientFullName, birthDate, measureName) {
-        const parts = patientFullName.trim().split(/\s+/);
-        const surname = parts[0] || null;
-        const firstname = parts[1] || null;
-        const lastname = parts.length > 2 ? parts[2] : null;
-        const result = await dao.getByData(scheduledAt, surname, firstname, lastname, birthDate, measureName);
+    async getPatientData(measure_book_id) {
+        const result = await dao.getData(measure_book_id);
         const taskInfo = TaskInformation.fromData(result)
         return taskInfo;
     }
@@ -33,8 +29,12 @@ export class MeasureBookService {
         );
         return await dao.add(measureBook);
     }
-//not used
-    async update(id, completedAt) {
-        await dao.update(id, completedAt);
+    
+    async update(measure_book_id, completedAt, result) {
+        await dao.update(
+            measure_book_id,
+            completedAt,
+            result
+        );
     }
 }

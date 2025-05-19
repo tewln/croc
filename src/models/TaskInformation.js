@@ -1,10 +1,16 @@
 export class TaskInformation {
-    constructor(scheduled_at, patient_full_name, birth_date, ward_name, doctor_full_name, diagnosis, allergy, name, dosage, measure_unit, quantity, narcotic, task_type) {
+    constructor(id, scheduled_at, completed_at, patient_surname, patient_firstname, patient_lastname, birth_date, ward_name, doctor_surname, doctor_firstname, doctor_lastname, diagnosis, allergy, name, dosage, measure_unit, quantity, narcotic, task_type, result) {
+        this.id = id;
         this.scheduled_at = scheduled_at;
-        this.patient_full_name = patient_full_name;
+        this.completed_at = completed_at;
+        this.patient_surname = patient_surname;
+        this.patient_firstname = patient_firstname;
+        this.patient_lastname = patient_lastname,
         this.birth_date = birth_date;
         this.ward_name = ward_name;
-        this.doctor_full_name = doctor_full_name;
+        this.doctor_surname = doctor_surname;
+        this.doctor_firstname = doctor_firstname;
+        this.doctor_lastname = doctor_lastname,
         this.diagnosis = diagnosis;
         this.allergy = allergy;
         this.name = name;
@@ -13,14 +19,21 @@ export class TaskInformation {
         this.quantity = quantity;
         this.narcotic = narcotic;
         this.task_type = task_type;
+        this.result = result;
     }
     toJSON() {
         return {
+            taskId: this.id,
             scheduledAt: this.scheduled_at,
-            patientFullName: this.patient_full_name,
+            completedAt: this.completed_at,
+            patientSurname: this.patient_surname,
+            patientFirstname: this.patient_firstname,
+            patientLastname: this.patient_lastname,
             birthDate: this.birth_date,
             ward: this.ward_name,
-            doctorFullName: this.doctor_full_name,
+            doctorSurname: this.doctor_surname,
+            doctorFirstname: this.doctor_firstname,
+            doctorLastname: this.doctor_lastname,
             diagnosis: this.diagnosis,
             allergy: this.allergy,
             taskType: this.task_type,
@@ -29,15 +42,22 @@ export class TaskInformation {
             measureUnit: this.measure_unit,
             quantity: this.quantity,
             narcotic: this.narcotic,
+            result: this.result
         }
     }
     static fromData(data) {
         return new TaskInformation(
+            data.id,
             data.scheduled_at,
-            data.patient_full_name,
+            data.completed_at,
+            data.patient_surname,
+            data.patient_firstname,
+            data.patient_lastname,
             data.birth_date,
             data.ward_name,
-            data.doctor_full_name,
+            data.doctor_surname,
+            data.doctor_firstname,
+            data.doctor_lastname,
             data.diagnosis,
             data.allergy,
             data.name,
@@ -45,7 +65,8 @@ export class TaskInformation {
             data.measure_unit,
             data.quantity,
             data.narcotic,
-            data.task_type
+            data.task_type,
+            data.result
         );
     }
 }

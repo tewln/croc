@@ -3,7 +3,7 @@ const service = new MeasureBookService();
 
 export class MeasureBookController {
 //not used
-    async getMeasuresOfPatient(req, res) {
+    async getMeasuresByPatientId(req, res) {
         try {
             const measures = await service.getByPatientId(req.params.id);
             res.json({
@@ -16,13 +16,10 @@ export class MeasureBookController {
         }
     }
 
-    async getMeasuresOfPatientByData(req, res) {
+    async getMeasureData(req, res) {
         try {
-            const taskInfo = await service.getByPatientData(
-                req.body.scheduledAt,
-                req.body.patientFullName,
-                req.body.birthDate,
-                req.body.measureName
+            const taskInfo = await service.getPatientData(
+                req.params.id
             );
             res.json({
                 task: [taskInfo]
@@ -50,11 +47,15 @@ export class MeasureBookController {
             });
         }
     }
-//not used
+    
     async completeMeasure(req, res) {
         try {
-            await service.update(req.params.id, req.body.completedAt);
-            res.status(204).send();
+            await service.update(
+                req.params.id,
+                req.body.completedAt,
+                req.body.result
+            );
+            res.status(200).send();
         } catch (error) {
             res.status(400).json({
                 error: error.message
