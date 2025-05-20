@@ -7,7 +7,7 @@ export class DepartmentService {
         if (!departmentData) {
             throw new Error('Отделение не найдено');
         }
-        return departmentData;
+        return [departmentData];
     }
     async getAll() {
         const departmentData = await dao.getAll();
@@ -17,8 +17,8 @@ export class DepartmentService {
         return departmentData;
     }
 
-    async getDepartmentsOf(user_id) {
-        const departmentData = await dao.getDepartmentsOf(user_id);
+    async getDepartmentsOf(user_id, organization_id) {
+        const departmentData = await dao.getDepartmentsOf(user_id, organization_id);
         if (!departmentData) {
             throw new Error('Отделения не найдены');
         }

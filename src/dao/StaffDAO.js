@@ -31,4 +31,12 @@ export class StaffDAO {
             staffData.position,
         );
     }
+    async getInfoByStaffId(staff_id) {
+        const query = `SELECT surname || ' ' || firstname || ' ' || COALESCE(lastname, '') AS staff_full_name,
+                              position
+                        FROM croc.staff 
+                        WHERE id = $1`;
+        const result = await db.query(query, [staff_id]);
+        return result.rows[0];
+    }
 }

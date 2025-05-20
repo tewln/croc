@@ -1,4 +1,5 @@
 import { UserDAO } from '../dao/UserDAO.js';
+import { BadRequestError } from '../errors.js';
 import { User } from '../models/User.js';
 import { StaffService } from '../services/StaffService.js';
 import crypt from 'argon2';
@@ -28,6 +29,20 @@ export class UserService {
 
     async getStaffIdById(id) {
         return staff.getIdByUserId(id);
+    }
+
+    async setDepartment(departmentId) {
+        if (!departmentId) {
+            throw new BadRequestError('Поле отделения пусто');
+        }
+        return departmentId;
+    }
+
+    async setOrganization(organizationId) {
+        if (!organizationId) {
+            throw new BadRequestError('Поле организации пусто');
+        }
+        return organizationId;
     }
 
     async validation(login, password) {

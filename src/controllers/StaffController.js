@@ -24,4 +24,16 @@ export class StaffController {
             })
         }
     }
+    async getHeader(req, res) {
+        try {
+            const header = await service.getHeaderByStaffId(req.session.StaffId, req.session.DepartmentId, req.session.OrganizationId);
+            res.json({
+                header: [header]
+            });
+        } catch (error) {
+            res.status(404).json({
+                error: error.message
+            })
+        }
+    }
 }

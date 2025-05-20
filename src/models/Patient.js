@@ -18,9 +18,22 @@ export class Patient {
         }
     }
     getDataByList() {
-        return [this.firstname, this.surname, this.lastname, this.birth_date, this.allergy];
+        return [
+            this.firstname,
+            this.surname,
+            this.lastname,
+            this.birth_date,
+            this.allergy
+        ];
     }
     static fromData(data) {
-        return new Patient(data.id, data.firstname, data.surname, data.lastname, data.birth_date, data.allergy);
+        return new Patient(
+            data.id,
+            data.firstname,
+            data.surname,
+            data.lastname,
+            data.birth_date,
+            data.allergy
+        );
     }
 }

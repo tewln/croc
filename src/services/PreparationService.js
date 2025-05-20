@@ -1,32 +1,31 @@
-import { MeasureDAO } from '../dao/MeasureDAO.js';
-import { Measure } from '../models/Measure.js';
-const dao = new MeasureDAO();
-
-export class MeasureService {
-    async getOfMBId(measureBookId) {
-        const measureData = await dao.getById(measureBookId);
-        if (!measureData) {
-            throw new Error('Измерение в справочнике не найдено');
+import { PreparationDAO } from '../dao/PreparationDAO.js';
+import { Preparation } from '../models/Preparation.js';
+const dao = new PreparationDAO();
+//not used
+export class PreparationService {
+        async getAll() {
+        const preparations = await dao.getAll();
+        if (!preparations || preparations.length === 0) {
+            throw new Error('Препараты не найдены');
         }
-        return measureData;
+        return preparations;
     }
 
-    async getAll() {
-        const measuresData = await dao.getAll();
-        if (!measuresData || measuresData.length === 0) {
-            throw new Error('Измерения в справочнике не найдены');
+    async getById(id) {
+        const preparation = await dao.getById(id);
+        if (!preparation) {
+            throw new Error('Препарат не найден');
         }
-        return measuresData;
+        return [preparation];
+   }
+
+    async create(preparationData) {
+        const preparation = Preparation.fromData(preparationData);
+        return await dao.add(preparation);
     }
 
-    async create(measureData) {
-        const measure = Measure.fromData(measureData);
-        const measureId = await dao.add(measure);
-        return measureId;
+    async update(id, preparationData) {
+            const preparation = Preparation.fromData({ id, ...preparationData });
+        await dao.update(preparation);
     }
-
-    async update(id, date) {
-        await dao.update(id, date);
-    }
-
 }

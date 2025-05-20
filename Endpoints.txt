@@ -1,0 +1,107 @@
+) Название: Информация о пациенте по id
+   Endpoint: /api/patient/:id
+   HTTP метод: GET
+   Метод: getPatient
+   Тело запроса: none
+   Тело ответа: 
+{
+    "patients": [
+        {
+            "id": id,
+            "firstname": "Имя",
+            "surname": "Фамилия",
+            "lastname": "Отчество",
+            "birthDate": "1988-08-21T18:00:00.000Z",
+            "allergy": "Аллергии"
+        }
+    ]
+}
+
+) Название: Список пациентов
+   Endpoint: /api/patient
+   HTTP метод: GET
+   Метод: getPatients
+   Тело запроса: none
+   Тело ответа: 
+{
+    "patients": [
+        {
+            "id": id,
+            "firstname": "Имя",
+            "surname": "Фамилия",
+            "lastname": "Отчество",
+            "birthDate": "1988-08-21T18:00:00.000Z",
+            "allergy": "Алергии"
+        },
+        {
+            "id": id,
+            "firstname": "Имя",
+            "surname": "Фамилия",
+            "lastname": "Отчество",
+            "birthDate": "1988-08-21T18:00:00.000Z",
+            "allergy": "Алергии"
+        }
+	]
+}
+
+) Название: Создать пациента
+   Endpoint: /api/patient
+   HTTP метод: POST
+   Метод: createPatient
+   Тело запроса: 
+{
+	"firstname": "Имя",
+	"surname": "Фамилия",
+	"lastname": "Отчество",
+	"birthDate": "1988-08-21T18:00:00.000Z",
+	"allergy": "Алергии"
+}
+   Тело ответа: 
+{
+    "id": id
+}
+
+) Название: Удалить пациента
+   Endpoint: /api/patient/:id
+   HTTP метод: DELETE
+   Метод: deletePatient
+   Тело запроса: none
+   Тело ответа: none
+
+) Название: Логин пользователя
+   Endpoint: /api/user/login
+   HTTP метод: POST
+   Метод: login
+   Тело запроса: 
+{
+	"login": "Логин",
+	"password": "Пароль",
+}
+   Тело ответа: none
+
+) Название: Логаут пользователя
+   Endpoint: /api/user/logout
+   HTTP метод: POST
+   Метод: logout
+   Тело запроса: none
+   Тело ответа: none
+
+) Название: Организации пользователя
+   Endpoint: /api/organization/staff
+   HTTP метод: GET
+   Метод: getOrganizationsByStaff
+   Тело запроса: none
+   Тело ответа:
+{
+	"name": "Название организации",
+}
+
+) Название: Отделения пользователя
+   Endpoint: /api/organization/staff
+   HTTP метод: GET
+   Метод: getDepartmentsByStaff
+   Тело запроса: none
+   Тело ответа:
+{
+	"name": "Название отделения",
+}

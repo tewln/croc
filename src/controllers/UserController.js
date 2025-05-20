@@ -27,14 +27,19 @@ export class UserController {
             const userData = await service.validation(login, password);
             if (userData) {
                 req.session.isAuthenticated = true;
-                req.session.UserId = userData.id; //в сервис
+                req.session.UserId = userData.id;
                 req.session.StaffId = await service.getStaffIdById(userData.id);
                 res.status(204).send();
             } else {
             res.status(401).json({ error: 'Требуется авторизация' });
             }
         } catch (error) {
+            if (error.name === 'DatabaseIsDownError') {
+                res.status(521).json({ error: error.message });
+            }
+            else {
             res.status(400).json({ error: error.message });
+            }
         }
     }
 
@@ -57,4 +62,13 @@ export class UserController {
         }
     }
 
+    async saveInfo(req, res) {
+        try {
+            req.session.DepartmentId = await service.setDepartment(req.body.departmentId);
+            req.session.OrganizationId = await service.setOrganization(req.body.organizationId)
+            res.status(204).send();
+        } catch (error) {
+            res.status(400).json({ error: error.message });
+        }
+    }
 }
