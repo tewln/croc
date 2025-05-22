@@ -1,48 +1,22 @@
-) Название: Информация о пациенте по id
-   Endpoint: /api/patient/:id
-   HTTP метод: GET
-   Метод: getPatient
-   Тело запроса: none
-   Тело ответа: 
-{
-    "patients": [
-        {
-            "id": id,
-            "firstname": "Имя",
-            "surname": "Фамилия",
-            "lastname": "Отчество",
-            "birthDate": "1988-08-21T18:00:00.000Z",
-            "allergy": "Аллергии"
-        }
-    ]
-}
+ Название: Логин пользователя
+   Endpoint: /api/user/login
+   HTTP метод: POST
+   Тело запроса:
+   {
+      "login": "user",
+      "password": "password"
+   }
+   Ответ:
+      204 Успешная авторизация
+      Тело ответа: null
 
-) Название: Список пациентов
-   Endpoint: /api/patient
-   HTTP метод: GET
-   Метод: getPatients
+      400 
+
+ Название: Логаут пользователя
+   Endpoint: /api/user/logout
+   HTTP метод: POST
    Тело запроса: none
-   Тело ответа: 
-{
-    "patients": [
-        {
-            "id": id,
-            "firstname": "Имя",
-            "surname": "Фамилия",
-            "lastname": "Отчество",
-            "birthDate": "1988-08-21T18:00:00.000Z",
-            "allergy": "Алергии"
-        },
-        {
-            "id": id,
-            "firstname": "Имя",
-            "surname": "Фамилия",
-            "lastname": "Отчество",
-            "birthDate": "1988-08-21T18:00:00.000Z",
-            "allergy": "Алергии"
-        }
-	]
-}
+   Тело ответа: none
 
 ) Название: Создать пациента
    Endpoint: /api/patient

@@ -1,34 +1,42 @@
 import db from '../config/db.js';
-import { NotFoundError } from '../errors.js';
+import '../errors.js';
 import { MeasureBook } from '../models/MeasureBook.js';
 
 export class MeasureBookDAO {
     async getByPatientId(id) {
-        const query = `
-                    SELECT mb.scheduled_at,
-                           mb.completed_at,
-                           m.name,
-                           m.measure_unit
-                        AS scheduled_at,
-                           completed_at,
-                           measure_name,
-                           measure_unit 
-                      FROM croc.measure_book mb
-                           JOIN croc.measure m ON m.id = mb.measure_type
-                     WHERE patient = $1`;
-        const result = await db.query(query, [id]);
-
-        if (result.rows.length === 0) {
-            return null;
+        try {
+            const query = `
+                        SELECT mb.scheduled_at,
+                               mb.completed_at,
+                               m.name,
+                               m.measure_unit
+                            AS scheduled_at,
+                               completed_at,
+                               measure_name,
+                               measure_unit 
+                          FROM croc.measure_book mb
+                               JOIN croc.measure m ON m.id = mb.measure_type
+                         WHERE patient = $1`;
+            const result = await db.query(query, [id]);
+            if (result.rows.length === 0) {
+                return null;
+            }
+            return result.rows.map(measureData => new MeasureBook(
+                measureData.id,
+                measureData.patient,
+                measureData.measure_type,
+                measureData.scheduled_at,
+                measureData.completed_at
+            ));
+        } catch (error) {
+            if (error.code === 'ECONNREFUSED') {
+                console.error(error.stack);
+                throw new ServiceUnavailableError('Ошибка подключения к базе данных');
+            } else {
+                console.error(error.stack);
+                throw new InternalServerError(error.message);
+            }
         }
-
-        return result.rows.map(measureData => new MeasureBook(
-            measureData.id,
-            measureData.patient,
-            measureData.measure_type,
-            measureData.scheduled_at,
-            measureData.completed_at
-        ));
     }
 
     async getData(measure_book_id) {
@@ -66,31 +74,61 @@ export class MeasureBookDAO {
             }
             return result.rows[0];
         } catch (error) {
-            if (error.code === 'ECONNREFUSED') {
-                console.error(error.errors[0].message);
-                throw new DatabaseIsDownError(error.errors[0].message);
+            if (error instanceof NotFoundError) {
+                throw error;
+            } else if (error.code === 'ECONNREFUSED') {
+                console.error(error.stack);
+                throw new ServiceUnavailableError('Ошибка подключения к базе данных');
             } else {
-                console.error(error.message);
-                throw new Error(error.message);
+                console.error(error.stack);
+                throw new InternalServerError(error.message);
             }
         }
     }
 
     async add(measureData) {
-        const query = `
-            INSERT INTO croc.measure_book (patient, measure_type, scheduled_at)
-            VALUES ($1, $2, $3)
-            RETURNING id
-        `;
-        const result = await db.query(query, measureData.getDataByList());
-        return result.rows[0].id;
+        try {
+            const query = `
+                INSERT INTO croc.measure_book (patient, measure_type, scheduled_at)
+                VALUES ($1, $2, $3)
+                RETURNING id
+            `;
+            const result = await db.query(query, measureData.getDataByList());
+            return result.rows[0].id;
+        } catch (error) {
+            if (error.code === 'ECONNREFUSED') {
+                console.error(error.stack);
+                throw new ServiceUnavailableError('Ошибка подключения к базе данных');
+            } else if (error.code === '23505') {
+                console.error(error.stack);
+                throw error;
+            } else {
+                console.error(error.stack);
+                throw new InternalServerError(error.message);
+            }
+        }
     }
 
     async update(measure_book_id, completed_at, result) {
-        const query = `UPDATE croc.measure_book mb
-                          SET completed_at = $1::TIMESTAMP,
-                              result = $2
-                        WHERE mb.id = $3`;
-        await db.query(query, [completed_at, result, measure_book_id]);
+        try {
+            const query = `UPDATE croc.measure_book mb
+                              SET completed_at = $1::TIMESTAMP,
+                                  result = $2
+                            WHERE mb.id = $3`;
+            const queryResult = await db.query(query, [completed_at, result, measure_book_id]);
+            if (queryResult.rowCount === 0) {
+                throw new NotFoundError('Данное измерение не найдено');
+            }
+        } catch (error) {
+            if (error instanceof NotFoundError) {
+                throw error;
+            } else if (error.code === 'ECONNREFUSED') {
+                console.error(error.stack);
+                throw new ServiceUnavailableError('Ошибка подключения к базе данных');
+            } else {
+                console.error(error.stack);
+                throw new InternalServerError(error.message);
+            }
+        }
     }
 }

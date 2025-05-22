@@ -65,10 +65,10 @@ export class TaskDAO {
         } catch (error) {
             if (error.code === 'ECONNREFUSED') {
                 console.error(error.errors[0].stack);
-                throw new DatabaseIsDownError(error.errors[0].message);
+                throw new ServiceUnavailableError('Ошибка подключения к базе данных');
             } else {
                 console.error(error.stack);
-                throw new Error(error.message);
+                throw new InternalServerError(error.message);
             }
         }
     }

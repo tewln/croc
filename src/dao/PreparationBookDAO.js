@@ -1,33 +1,42 @@
 import db from '../config/db.js';
 import { PreparationBook } from '../models/PreparationBook.js';
+import '../errors.js';
 
 export class PreparationBookDAO {
     async getByPatientId(id) {
-        const query = `
-                    SELECT pb.*, p.name AS preparation_name 
-                      FROM croc.preparation_book pb
-                           JOIN croc.preparation p ON p.id = pb.preparation
-                     WHERE patient = $1`;
-        const result = await db.query(query, [id]);
-
-        if (result.rows.length === 0) {
-            return null;
+        try {
+            const query = `
+                        SELECT pb.*, p.name AS preparation_name 
+                          FROM croc.preparation_book pb
+                          JOIN croc.preparation p ON p.id = pb.preparation
+                         WHERE patient = $1`;
+            const result = await db.query(query, [id]);
+            if (result.rows.length === 0) {
+                return null;
+            }
+            return result.rows.map(bookData => new PreparationBook(
+                bookData.id,
+                bookData.patient,
+                bookData.preparation,
+                bookData.quantity,
+                bookData.scheduled_at,
+                bookData.completed_at
+            ));
+        } catch (error) {
+            if (error.code === 'ECONNREFUSED') {
+                console.error(error.errors[0].stack);
+                throw new ServiceUnavailableError('Ошибка подключения к базе данных');
+            } else {
+                console.error(error.stack);
+                throw new InternalServerError(error.message);
+            }
         }
-
-        return result.rows.map(bookData => new PreparationBook(
-            bookData.id,
-            bookData.patient,
-            bookData.preparation,
-            bookData.quantity,
-            bookData.scheduled_at,
-            bookData.completed_at
-        ));
     }
 
     async getByData(preparation_book_id) {
         try {
             const query = `
-                        SELECT pb.id
+                        SELECT pb.id,
                                 scheduled_at,
                                 completed_at,
                                 pt.surname AS patient_surname,
@@ -57,33 +66,67 @@ export class PreparationBookDAO {
                                 JOIN croc.staff st ON st.id = an.doctor
                         WHERE an.discharge_date IS NULL AND 
                               pb.id = $1;`
-            const result = await db.query(query, [preparation_book_id])
+            const result = await db.query(query, [preparation_book_id]);
+            if (!result || result.rows.length === 0) {
+                throw new NotFoundError('Данное задание не найдено');
+            }
             return result.rows[0];
         } catch (error) {
-            if (error.code === 'ECONNREFUSED') {
-                console.error(error.errors[0].message);
-                throw new DatabaseIsDownError(error.errors[0].message);
+            if (error instanceof NotFoundError) {
+                throw error;
+            } else if (error.code === 'ECONNREFUSED') {
+                console.error(error.errors[0].stack);
+                throw new ServiceUnavailableError('Ошибка подключения к базе данных');
             } else {
-                console.error(error.message);
-                throw new Error(error.message);
+                console.error(error.stack);
+                throw new InternalServerError(error.message);
             }
         }
     }
 
     async add(preparationBook) {
-        const query = `
-            INSERT INTO croc.preparation_book (patient, preparation, dosage, quantity, scheduled_at)
-            VALUES ($1, $2, $3, $4, $5)
-            RETURNING id
-        `;
-        const result = await db.query(query, preparationBook.getDataByList());
-        return result.rows[0].id;
+        try {
+            const query = `
+                INSERT INTO croc.preparation_book (patient, preparation, dosage, quantity, scheduled_at)
+                VALUES ($1, $2, $3, $4, $5)
+                RETURNING id
+            `;
+            const result = await db.query(query, preparationBook.getDataByList());
+            return result.rows[0].id;
+        } catch (error) {
+            if (error.code === 'ECONNREFUSED') {
+                console.error(error.errors[0].stack);
+                throw new ServiceUnavailableError('Ошибка подключения к базе данных');
+            } else if (error.code === '23505') {
+                console.error(error.stack);
+                throw error;
+            } else {
+                console.error(error.stack);
+                throw new InternalServerError(error.message);
+            }
+        }
     }
 
     async update(preparation_book_id, completed_at) {
-        const query = `UPDATE croc.preparation_book pb
-                          SET completed_at = $1
-                        WHERE pb.id = $2`;
-        await db.query(query, [completed_at, preparation_book_id]);
+        try {
+            const query = `UPDATE croc.preparation_book pb
+                              SET completed_at = $1
+                            WHERE pb.id = $2`;
+            const queryResult = await db.query(query, [completed_at, preparation_book_id]);
+            
+            if (queryResult.rowCount === 0) {
+                throw new NotFoundError('Данное назначение не найдено');
+            }
+        } catch (error) {
+            if (error instanceof NotFoundError) {
+                throw error;
+            } else if (error.code === 'ECONNREFUSED') {
+                console.error(error.errors[0].stack);
+                throw new ServiceUnavailableError('Ошибка подключения к базе данных');
+            } else {
+                console.error(error.stack);
+                throw new InternalServerError(error.message);
+            }
+        }
     }
 }

@@ -1,3 +1,4 @@
+import { UnauthorizedError } from '../errors.js';
 import {UserService} from '../services/UserService.js';
 const service = new UserService();
 
@@ -25,21 +26,13 @@ export class UserController {
         try {
             const { login, password } = req.body;
             const userData = await service.validation(login, password);
-            if (userData) {
-                req.session.isAuthenticated = true;
-                req.session.UserId = userData.id;
-                req.session.StaffId = await service.getStaffIdById(userData.id);
-                res.status(204).send();
-            } else {
-            res.status(401).json({ error: 'Требуется авторизация' });
-            }
+            req.session.isAuthenticated = true;
+            req.session.UserId = userData.id;
+            req.session.StaffId = await service.getStaffIdById(userData.id);
+            res.status(204).send();
         } catch (error) {
-            if (error.name === 'DatabaseIsDownError') {
-                res.status(521).json({ error: error.message });
-            }
-            else {
-            res.status(400).json({ error: error.message });
-            }
+            res.status(error.statusCode).json({ error: error.message });
+            console.error(error.stack);
         }
     }
 
