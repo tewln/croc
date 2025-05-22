@@ -34,8 +34,8 @@ export class MeasureBookController {
     async createMeasure(req, res) {
         try {
             const measureId = await service.create({
-                patient: req.body.patient,
-                measureType: req.body.measureType,
+                patient_id: req.body.patientId,
+                measure_id: req.body.measureId,
                 scheduledAt: req.body.scheduledAt
             });
             res.status(201).json({

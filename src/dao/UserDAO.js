@@ -1,6 +1,6 @@
 import db from '../config/db.js';
 import { User } from '../models/User.js';
-import '../errors.js';
+import { DatabaseIsDownError } from '../errors.js';
 
 export class UserDAO {
     async getById(id) {

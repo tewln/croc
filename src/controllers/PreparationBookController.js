@@ -47,8 +47,8 @@ export class PreparationBookController {
     async createPreparation(req, res) {
         try {
             const preparationId = await service.create({
-                patient: req.body.patient,
-                preparation: req.body.preparation,
+                patient: req.body.patientId,
+                preparation: req.body.preparationId,
                 dosage: req.body.dosage,
                 quantity: req.body.quantity,
                 scheduledAt: req.body.scheduledAt

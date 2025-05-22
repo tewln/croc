@@ -27,6 +27,7 @@ app.use(
         secret: process.env.SECRET,
         resave: false,
         saveUninitialized: false,
+        credentials: 'include',
         cookie: {
             maxAge: 1000 * 60 * 60 * 12,
         }

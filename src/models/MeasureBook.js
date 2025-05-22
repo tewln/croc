@@ -21,8 +21,7 @@ export class MeasureBook {
         return [
             this.patient, 
             this.measure_type, 
-            this.scheduled_at,
-            this.completed_at
+            this.scheduled_at
         ];
     }
 

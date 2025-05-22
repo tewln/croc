@@ -22,8 +22,8 @@ export class MeasureBookService {
     async create(data) {
         const measureBook = new MeasureBook(
             null,
-            data.patient,
-            data.measureType,
+            data.measure_id,
+            data.patient_id,
             data.scheduledAt,
             null
         );
