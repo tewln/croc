@@ -259,7 +259,7 @@ CREATE TABLE croc.measure_book (
   id SERIAL,
   patient INT NOT NULL,
   measure_type INT NOT NULL,
-  result NUMERIC,
+  result VARCHAR(20),
   scheduled_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   completed_at TIMESTAMP,
 
