@@ -250,7 +250,7 @@ INSERT INTO croc.measure_book (patient, measure_type, result, scheduled_at, comp
 INSERT INTO croc.anamnesis (department, ward, patient, admission_date, discharge_date, diagnosis, mobility, doctor, nurse) VALUES
   (1,1,1,'2025-03-30',NULL,2,true,1,4),
   (2,3,2,'2025-03-29',NULL,3,false,2,4),
-  (3,4,3,'2025-04-01',NULL,1,true,3,9),
+  (1,4,3,'2025-04-01',NULL,1,true,3,9),
   (4,5,4,'2025-04-02',NULL,4,false,5,10),
   (5,6,5,'2025-04-03',NULL,5,true,6,11),
   (6,7,6,'2025-04-04',NULL,6,true,8,12),
@@ -259,7 +259,7 @@ INSERT INTO croc.anamnesis (department, ward, patient, admission_date, discharge
   (1,2,9,'2025-04-07',NULL,9,false,1,4),
   (2,12,10,'2025-04-08',NULL,10,true,2,4),
   (3,13,11,'2025-04-09',NULL,11,true,3,9),
-  (4,14,12,'2025-04-10',NULL,12,false,5,10),
+  (1,14,12,'2025-04-10',NULL,12,false,5,10),
   (5,15,13,'2025-04-11',NULL,1,true,6,11),
   (6,7,14,'2025-04-12',NULL,2,false,8,12),
   (7,8,15,'2025-04-13',NULL,3,true,7,13);

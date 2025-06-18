@@ -49,7 +49,7 @@ export class TaskDAO {
                                             JOIN patient_data pd ON pb.patient = pd.id
                                             JOIN croc.preparation pr ON pb.preparation = pr.id
                                         ) tasks
-                                WHERE scheduled_at BETWEEN $1::TIMESTAMP AND $2::TIMESTAMP
+                                WHERE scheduled_at BETWEEN $1::TIMESTAMP AND ($2::TIMESTAMP + INTERVAL '1 day')
                             ORDER BY scheduled_at;`;
             const result = await db.query(query,[date_from, date_to, department]);
             return result.rows.map(task => new Task(
